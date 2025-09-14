@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuinielaZo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="/Codigo/CSS/Styles.css">
+</head>
+
+<body>
+
+    <header>
+        <div class="head">
+            <div class="logo">
+                <a href="/Codigo/HTML/index.html">
+                    <img src="/Resources/Imagenes/QuinielazoLogo.png" alt="logo">
+                </a>
+            </div>
+
+            <div class="navbar">
+                <a href="#torneo">Torneo</a>
+                <a href="/Codigo/HTML/chat.html">Chat</a>
+                <a href="#recompensas">Recompensas</a>
+                <a href="#novedades">Novedades</a>
+                <a href="#perfil">Perfil</a>
+            </div>
+        </div>
+    </header>
+
+    <section class="screen" id="chats">
+        <div class="chatwrap">
+            <div class="card chatlist">
+                <h3>Chats</h3>
+                <div class="chatitem">
+                    <div class="status online"></div>
+                    <div>
+                        <strong>Grupo A</strong>
+                        <p style="margin:4px 0 0">Octavos listos ✅</p>
+                    </div>
+                </div>
+                <div class="chatitem mt">
+                    <div class="status off"></div>
+                    <div>
+                        <strong>Privado • Rafa</strong>
+                        <p style="margin:4px 0 0">Nos vemos en la videollamada</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card" id="chatpane">
+                <h3 id="chatTitle">Grupo A</h3>
+                <div id="messages" style="min-height:280px;">
+                    <div class="bubble other">Bienvenidos al grupo 👋</div>
+                    <div class="bubble me">Hoy simulamos la jornada 3 ⚽</div>
+                    <div class="bubble other">Subo la tabla en un momento 📎</div>
+                </div>
+                <div class="compose">
+                    <input placeholder="Escribe un mensaje… (mock)" />
+                    <button class="btn">📷</button>
+                    <button class="btn">📎</button>
+                    <a href="/Codigo/HTML/videollamada.html">
+                        <button class="btn">🎥</button>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footerLinks">
+            <a href="#">Contacto</a>
+            <a href="#">Aviso de Privacidad</a>
+            <a href="#">Términos y Condiciones</a>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2026 QuinielaZo. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+</body>
+
+</html>
