@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración | QuinielaZo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #ffd700;
+            --secondary-color: #7a0000;
+            --background-color: #1a1a1a;
+            --sidebar-color: #222;
+            --card-color: #2d2d2d;
+            --text-color: #f0f0f0;
+            --text-light: #aaa;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+
+        .admin-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background-color: var(--sidebar-color);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 4px 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo img {
+            width: 80px;
+            margin-bottom: 10px;
+        }
+
+        .logo h2 {
+            color: var(--primary-color);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.5em;
+        }
+
+        .admin-nav ul {
+            list-style: none;
+        }
+
+        .admin-nav li a {
+            display: block;
+            color: var(--text-light);
+            text-decoration: none;
+            padding: 15px 20px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .admin-nav li a:hover,
+        .admin-nav li a.active {
+            background-color: var(--card-color);
+            color: var(--primary-color);
+        }
+
+        .admin-nav li a i {
+            margin-right: 10px;
+        }
+
+        /* Main Content */
+        .content-wrapper {
+            flex-grow: 1;
+            padding: 40px;
+        }
+
+        .admin-header {
+            margin-bottom: 40px;
+        }
+
+        .admin-header h1 {
+            color: var(--primary-color);
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        /* Sections */
+        .admin-section {
+            display: none;
+        }
+
+        .admin-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .admin-section h2 {
+            margin-bottom: 20px;
+            color: var(--text-color);
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 10px;
+        }
+
+        .admin-card {
+            background-color: var(--card-color);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            color: var(--primary-color);
+            font-family: 'Montserrat', sans-serif;
+            margin-bottom: 15px;
+        }
+
+        /* Tablas de datos */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #444;
+        }
+
+        .data-table th {
+            background-color: #333;
+            color: var(--primary-color);
+        }
+
+        /* Botones y formularios */
+        .edit-btn, .submit-btn, .add-button, .delete-btn {
+            padding: 8px 15px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            color: #fff;
+        }
+
+        .edit-btn {
+            background-color: #555;
+        }
+
+        .edit-btn:hover {
+            background-color: #777;
+        }
+
+        .submit-btn {
+            background-color: var(--secondary-color);
+            margin-top: 15px;
+        }
+
+        .submit-btn:hover {
+            background-color: #a00000;
+        }
+
+        .add-button {
+            background-color: var(--primary-color);
+            color: var(--background-color);
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .add-button:hover {
+            background-color: #ffde40;
+        }
+
+        .delete-btn {
+            background-color: #f44336;
+            margin-left: 10px;
+        }
+        
+        .delete-btn:hover {
+            background-color: #d32f2f;
+        }
+
+        .complete-btn {
+            background-color: #4CAF50;
+            margin-left: 10px;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .complete-btn:hover {
+            background-color: #45a049;
+        }
+
+        /* Estilos específicos de secciones */
+        .elim-match,
+        .quiniela-match {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .quiniela-match-input-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .quiniela-match-input-group input[type="text"] {
+            flex-grow: 1;
+            padding: 8px;
+            background-color: #333;
+            border: 1px solid #555;
+            border-radius: 5px;
+            color: var(--text-color);
+        }
+
+        .elim-match input,
+        .quiniela-match input[type="number"] {
+            width: 60px;
+            padding: 8px;
+            background-color: #333;
+            border: 1px solid #555;
+            border-radius: 5px;
+            color: var(--text-color);
+            text-align: center;
+        }
+        
+        /* Contenedores de insignias */
+        #insignias-list-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Insignias */
+        .insignia-item {
+            display: flex;
+            align-items: center;
+            background-color: #333;
+            padding: 15px;
+            border-radius: 12px;
+            width: 100%;
+            gap: 15px;
+        }
+        
+        .insignia-item .insignia-content {
+            flex-grow: 1;
+        }
+
+        .insignia-item img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .insignia-info h4 {
+            color: var(--primary-color);
+        }
+
+        .insignia-info p {
+            font-size: 0.9em;
+            color: var(--text-light);
+        }
+
+        .remove-insignia-btn {
+            background-color: #f44336;
+            color: #fff;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .remove-insignia-btn:hover {
+            background-color: #d32f2f;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--primary-color);
+        }
+
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #555;
+            background-color: #333;
+            color: var(--text-color);
+        }
+
+        /* Estilos para las tareas */
+        .task-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .task-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #333;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        
+        .task-item .task-info {
+            flex-grow: 1;
+        }
+
+        .task-item .task-info h4 {
+            color: var(--primary-color);
+        }
+
+        .task-item .task-info p {
+            font-size: 0.9em;
+            color: var(--text-light);
+            margin-top: 5px;
+        }
+        
+        .match-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .match-completed-status {
+            color: #4CAF50;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="/Resources/Imagenes/QuinielazoLogo.png" alt="logo">
+                <h2>Admin</h2>
+            </div>
+            <nav class="admin-nav">
+                <ul>
+                    <li><a href="#" data-section="partidos-mundial" class="active"><i class="fas fa-futbol"></i> Partidos Mundial 2026</a></li>
+                    <li><a href="#" data-section="quinielas"><i class="fas fa-list-check"></i> Gestión de Quinielas</a></li>
+                    <li><a href="#" data-section="tareas"><i class="fas fa-tasks"></i> Tareas</a></li>
+                    <li><a href="#" data-section="insignias"><i class="fas fa-medal"></i> Insignias</a></li>
+                    <li><a href="#" data-section="resultados"><i class="fas fa-clipboard-check"></i> Resultados de Quinielas</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="content-wrapper">
+            <header class="admin-header">
+                <h1>Panel de Administración</h1>
+            </header>
+
+            <section id="partidos-mundial-section" class="admin-section active">
+                <h2>Partidos Mundial 2026</h2>
+                <div class="admin-card">
+                    <h4 class="card-title">Agregar nuevo partido</h4>
+                    <form id="add-match-form">
+                        <div class="form-group">
+                            <label for="team1-name">Equipo 1</label>
+                            <input type="text" id="team1-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="team2-name">Equipo 2</label>
+                            <input type="text" id="team2-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="match-stage">Fase del partido</label>
+                            <select id="match-stage">
+                                <option value="Grupo A">Fase de Grupo A</option>
+                                <option value="Octavos">Octavos de Final</option>
+                                <option value="Cuartos">Cuartos de Final</option>
+                                <option value="Semifinal">Semifinal</option>
+                                <option value="Final">Final</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="add-button"><i class="fas fa-plus"></i> Agregar Partido</button>
+                    </form>
+                </div>
+                <div class="admin-card">
+                    <h4 class="card-title">Partidos</h4>
+                    <div id="match-list-container" class="match-list">
+                        </div>
+                </div>
+            </section>
+
+            <section id="quinielas-section" class="admin-section">
+                <h2>Gestión de Quinielas</h2>
+                <div class="admin-card">
+                    <h4 class="card-title">Crear Nueva Quiniela</h4>
+                    <form id="quiniela-form">
+                        <button type="button" class="add-button" id="add-match-btn"><i class="fas fa-plus"></i> Agregar Partido</button>
+                        <div id="quiniela-matches-container">
+                            </div>
+                        <button type="submit" class="submit-btn"><i class="fas fa-save"></i> Guardar Quiniela</button>
+                        <button type="button" class="delete-btn" id="delete-quiniela-btn"><i class="fas fa-trash-alt"></i> Eliminar Quiniela</button>
+                    </form>
+                </div>
+            </section>
+            
+            <section id="tareas-section" class="admin-section">
+                <h2>Gestión de Tareas</h2>
+                <div class="admin-card">
+                    <h4 class="card-title">Agregar nueva tarea</h4>
+                    <form id="add-task-form">
+                        <div class="form-group">
+                            <label for="task-title">Título de la tarea</label>
+                            <input type="text" id="task-title" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="task-desc">Descripción</label>
+                            <textarea id="task-desc" required></textarea>
+                        </div>
+                        <button type="submit" class="add-button"><i class="fas fa-plus"></i> Agregar Tarea</button>
+                    </form>
+                </div>
+                <div class="admin-card">
+                    <h4 class="card-title">Tareas pendientes</h4>
+                    <div id="task-list-container" class="task-list">
+                        </div>
+                </div>
+            </section>
+
+            <section id="insignias-section" class="admin-section">
+                <h2>Gestión de Insignias</h2>
+                <div class="admin-card">
+                    <h4 class="card-title">Agregar nueva insignia</h4>
+                    <form id="add-insignia-form">
+                        <div class="form-group">
+                            <label for="insignia-name">Nombre de la insignia</label>
+                            <input type="text" id="insignia-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="insignia-desc">Descripción</label>
+                            <textarea id="insignia-desc" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="insignia-img">URL de la imagen</label>
+                            <input type="text" id="insignia-img" required>
+                        </div>
+                        <button type="submit" class="add-button"><i class="fas fa-plus"></i> Agregar Insignia</button>
+                    </form>
+                </div>
+
+                <div class="admin-card">
+                    <h4 class="card-title">Insignias actuales</h4>
+                    <div id="insignias-list-container">
+                        </div>
+                </div>
+            </section>
+
+            <section id="resultados-section" class="admin-section">
+                <h2>Resultados de Quinielas</h2>
+                <div class="admin-card">
+                    <h4 class="card-title">Resultados Jornada 1</h4>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Jugador</th>
+                                <th>Puntos</th>
+                                <th>Pronóstico</th>
+                                <th>Resultado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Usuario 1</td>
+                                <td>10</td>
+                                <td>México 2 - 1 Japón</td>
+                                <td>México 2 - 1 Japón</td>
+                            </tr>
+                            <tr>
+                                <td>Usuario 2</td>
+                                <td>5</td>
+                                <td>México 1 - 1 Japón</td>
+                                <td>México 2 - 1 Japón</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const navLinks = document.querySelectorAll('.admin-nav a');
+            const sections = document.querySelectorAll('.admin-section');
+            const addMatchBtnQuiniela = document.getElementById('add-match-btn');
+            const matchesContainerQuiniela = document.getElementById('quiniela-matches-container');
+            const quinielaForm = document.getElementById('quiniela-form');
+            const deleteQuinielaBtn = document.getElementById('delete-quiniela-btn');
+
+            const addInsigniaForm = document.getElementById('add-insignia-form');
+            const insigniasListContainer = document.getElementById('insignias-list-container');
+            const insigniaNameInput = document.getElementById('insignia-name');
+            const insigniaDescInput = document.getElementById('insignia-desc');
+            const insigniaImgInput = document.getElementById('insignia-img');
+
+            const addTaskForm = document.getElementById('add-task-form');
+            const taskTitleInput = document.getElementById('task-title');
+            const taskDescInput = document.getElementById('task-desc');
+            const taskListContainer = document.getElementById('task-list-container');
+            
+            // Nueva lógica de partidos
+            const addMatchForm = document.getElementById('add-match-form');
+            const matchListContainer = document.getElementById('match-list-container');
+            const team1NameInput = document.getElementById('team1-name');
+            const team2NameInput = document.getElementById('team2-name');
+            const matchStageSelect = document.getElementById('match-stage');
+
+            // Navegación de la barra lateral
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    navLinks.forEach(item => item.classList.remove('active'));
+                    sections.forEach(sec => sec.classList.remove('active'));
+
+                    const targetSection = e.target.dataset.section;
+                    document.getElementById(targetSection + '-section').classList.add('active');
+                    e.target.classList.add('active');
+                });
+            });
+
+            // --- Lógica para la Gestión de Partidos del Mundial 2026 ---
+
+            // Función para renderizar los partidos del Mundial
+            const renderWorldCupMatches = () => {
+                const savedMatches = JSON.parse(localStorage.getItem('worldCupMatches') || '[]');
+                matchListContainer.innerHTML = '';
+
+                savedMatches.forEach((match, index) => {
+                    const matchDiv = document.createElement('div');
+                    matchDiv.classList.add('admin-card', 'elim-match');
+                    matchDiv.innerHTML = `
+                        <h4 class="card-title">${match.stage}</h4>
+                        <span class="elim-team-name">${match.team1Name}</span>
+                        <span class="elim-team-name">${match.team2Name}</span>
+                        <div class="match-actions">
+                            ${match.completed ? 
+                                `<span class="match-completed-status">Completado</span>` : 
+                                `<button class="complete-btn" data-index="${index}"><i class="fas fa-check"></i> Completado</button>`
+                            }
+                            <button class="edit-btn remove-match-btn" data-index="${index}">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </div>
+                    `;
+                    matchListContainer.appendChild(matchDiv);
+                });
+            };
+
+            // Lógica para agregar un nuevo partido
+            addMatchForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const team1Name = team1NameInput.value;
+                const team2Name = team2NameInput.value;
+                const stage = matchStageSelect.value;
+                
+                if (!team1Name || !team2Name) return;
+
+                const newMatch = {
+                    team1Name,
+                    team2Name,
+                    stage,
+                    completed: false
+                };
+
+                const savedMatches = JSON.parse(localStorage.getItem('worldCupMatches') || '[]');
+                savedMatches.push(newMatch);
+                localStorage.setItem('worldCupMatches', JSON.stringify(savedMatches));
+
+                alert('¡Partido agregado con éxito!');
+                team1NameInput.value = '';
+                team2NameInput.value = '';
+                renderWorldCupMatches();
+            });
+
+            // Lógica para eliminar un partido o marcarlo como completado
+            matchListContainer.addEventListener('click', (e) => {
+                const btn = e.target.closest('.remove-match-btn');
+                const completeBtn = e.target.closest('.complete-btn');
+
+                if (btn) {
+                    const index = btn.dataset.index;
+                    if (confirm("¿Estás seguro de que quieres eliminar este partido?")) {
+                        const savedMatches = JSON.parse(localStorage.getItem('worldCupMatches') || '[]');
+                        savedMatches.splice(index, 1);
+                        localStorage.setItem('worldCupMatches', JSON.stringify(savedMatches));
+                        renderWorldCupMatches();
+                        alert('Partido eliminado con éxito.');
+                    }
+                } else if (completeBtn) {
+                    const index = completeBtn.dataset.index;
+                    const savedMatches = JSON.parse(localStorage.getItem('worldCupMatches') || '[]');
+                    savedMatches[index].completed = true;
+                    localStorage.setItem('worldCupMatches', JSON.stringify(savedMatches));
+                    renderWorldCupMatches();
+                    alert('Partido marcado como completado.');
+                }
+            });
+
+            // Cargar partidos al iniciar
+            renderWorldCupMatches();
+
+            // --- Lógica para la Gestión de Quinielas ---
+
+            // Función para renderizar los partidos de la quiniela
+            const renderQuinielaMatches = (matches) => {
+                matchesContainerQuiniela.innerHTML = '';
+                matches.forEach(match => {
+                    const newMatchDiv = document.createElement('div');
+                    newMatchDiv.classList.add('quiniela-match');
+                    newMatchDiv.innerHTML = `
+                        <div class="quiniela-match-input-group">
+                            <input type="text" class="team1-name" placeholder="Equipo 1" value="${match.team1Name || ''}">
+                            <span>vs</span>
+                            <input type="text" class="team2-name" placeholder="Equipo 2" value="${match.team2Name || ''}">
+                            <input type="number" class="score1" placeholder="Goles" value="${match.score1 || ''}">
+                            <input type="number" class="score2" placeholder="Goles" value="${match.score2 || ''}">
+                        </div>
+                        <button type="button" class="edit-btn remove-match-btn"><i class="fas fa-trash-alt"></i></button>
+                    `;
+                    matchesContainerQuiniela.appendChild(newMatchDiv);
+
+                    newMatchDiv.querySelector('.remove-match-btn').addEventListener('click', () => {
+                        newMatchDiv.remove();
+                    });
+                });
+            };
+
+            // Cargar datos de la quiniela al iniciar la página
+            const loadSavedQuiniela = () => {
+                const savedQuiniela = localStorage.getItem('quinielaData');
+                if (savedQuiniela) {
+                    const matches = JSON.parse(savedQuiniela);
+                    renderQuinielaMatches(matches);
+                }
+            };
+
+            // Lógica para agregar un nuevo partido a la quiniela
+            addMatchBtnQuiniela.addEventListener('click', () => {
+                renderQuinielaMatches([...JSON.parse(localStorage.getItem('quinielaData') || '[]'), {}]);
+            });
+
+            // Lógica para guardar la quiniela
+            quinielaForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const matches = [];
+                const matchDivs = matchesContainerQuiniela.querySelectorAll('.quiniela-match');
+                
+                matchDivs.forEach(div => {
+                    const team1Name = div.querySelector('.team1-name').value;
+                    const team2Name = div.querySelector('.team2-name').value;
+                    const score1 = div.querySelector('.score1').value;
+                    const score2 = div.querySelector('.score2').value;
+
+                    matches.push({
+                        team1Name,
+                        team2Name,
+                        score1,
+                        score2
+                    });
+                });
+
+                localStorage.setItem('quinielaData', JSON.stringify(matches));
+                alert('¡Quiniela guardada con éxito!');
+                loadSavedQuiniela();
+            });
+
+            // Lógica para eliminar la quiniela guardada
+            deleteQuinielaBtn.addEventListener('click', () => {
+                if (confirm("¿Estás seguro de que quieres eliminar la quiniela? Esta acción no se puede deshacer.")) {
+                    localStorage.removeItem('quinielaData');
+                    matchesContainerQuiniela.innerHTML = '';
+                    alert('Quiniela eliminada con éxito.');
+                }
+            });
+
+            // Cargar quiniela al inicio
+            loadSavedQuiniela();
+
+            // --- Lógica para la Gestión de Tareas ---
+
+            // Función para renderizar las tareas
+            const renderTasks = () => {
+                const savedTasks = JSON.parse(localStorage.getItem('tasksData') || '[]');
+                taskListContainer.innerHTML = '';
+
+                savedTasks.forEach((task, index) => {
+                    const taskDiv = document.createElement('div');
+                    taskDiv.classList.add('task-item');
+                    taskDiv.innerHTML = `
+                        <div class="task-info">
+                            <h4>${task.title}</h4>
+                            <p>${task.desc}</p>
+                        </div>
+                        <button class="delete-btn remove-task-btn" data-index="${index}">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    `;
+                    taskListContainer.appendChild(taskDiv);
+                });
+            };
+
+            // Lógica para agregar una nueva tarea
+            addTaskForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const title = taskTitleInput.value;
+                const desc = taskDescInput.value;
+                if (!title || !desc) return;
+
+                const newTask = { title, desc };
+                const savedTasks = JSON.parse(localStorage.getItem('tasksData') || '[]');
+                savedTasks.push(newTask);
+                localStorage.setItem('tasksData', JSON.stringify(savedTasks));
+
+                alert('¡Tarea agregada con éxito!');
+                taskTitleInput.value = '';
+                taskDescInput.value = '';
+                renderTasks();
+            });
+
+            // Lógica para eliminar una tarea
+            taskListContainer.addEventListener('click', (e) => {
+                if (e.target.closest('.remove-task-btn')) {
+                    const btn = e.target.closest('.remove-task-btn');
+                    const index = btn.dataset.index;
+
+                    if (confirm("¿Estás seguro de que quieres eliminar esta tarea?")) {
+                        const savedTasks = JSON.parse(localStorage.getItem('tasksData') || '[]');
+                        savedTasks.splice(index, 1);
+                        localStorage.setItem('tasksData', JSON.stringify(savedTasks));
+                        renderTasks();
+                        alert('Tarea eliminada con éxito.');
+                    }
+                }
+            });
+
+            // Cargar tareas al iniciar
+            renderTasks();
+            
+            // --- Lógica para la Gestión de Insignias ---
+
+            // Función para renderizar las insignias
+            const renderInsignias = () => {
+                const savedInsignias = JSON.parse(localStorage.getItem('insigniasData') || '[]');
+                insigniasListContainer.innerHTML = '';
+                
+                savedInsignias.forEach((insignia, index) => {
+                    const insigniaDiv = document.createElement('div');
+                    insigniaDiv.classList.add('insignia-item');
+                    insigniaDiv.innerHTML = `
+                        <img src="${insignia.imgUrl}" alt="${insignia.name}">
+                        <div class="insignia-info">
+                            <h4>${insignia.name}</h4>
+                            <p>${insignia.desc}</p>
+                        </div>
+                        <button class="remove-insignia-btn" data-index="${index}">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    `;
+                    insigniasListContainer.appendChild(insigniaDiv);
+                });
+            };
+
+            // Lógica para agregar una nueva insignia
+            addInsigniaForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const name = insigniaNameInput.value;
+                const desc = insigniaDescInput.value;
+                const imgUrl = insigniaImgInput.value;
+                
+                const newInsignia = { name, desc, imgUrl };
+                
+                const savedInsignias = JSON.parse(localStorage.getItem('insigniasData') || '[]');
+                savedInsignias.push(newInsignia);
+                
+                localStorage.setItem('insigniasData', JSON.stringify(savedInsignias));
+                
+                alert('¡Insignia agregada con éxito!');
+                
+                insigniaNameInput.value = '';
+                insigniaDescInput.value = '';
+                insigniaImgInput.value = '';
+                
+                renderInsignias();
+            });
+
+            // Lógica para eliminar una insignia
+            insigniasListContainer.addEventListener('click', (e) => {
+                if (e.target.closest('.remove-insignia-btn')) {
+                    const btn = e.target.closest('.remove-insignia-btn');
+                    const index = btn.dataset.index;
+                    
+                    if (confirm("¿Estás seguro de que quieres eliminar esta insignia?")) {
+                        const savedInsignias = JSON.parse(localStorage.getItem('insigniasData') || '[]');
+                        savedInsignias.splice(index, 1);
+                        localStorage.setItem('insigniasData', JSON.stringify(savedInsignias));
+                        renderInsignias();
+                        alert('Insignia eliminada con éxito.');
+                    }
+                }
+            });
+
+            // Cargar insignias al inicio
+            renderInsignias();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recompensas | QuinielaZo</title>
+    <link rel="stylesheet" href="/Codigo/CSS/Styles.css">
+</head>
+<body>
+<header>
+        <div class="head">
+            <div class="logo">
+                <a href="/Codigo/HTML/index.html">
+                    <img src="/Resources/Imagenes/QuinielazoLogo.png" alt="logo">
+                </a>
+            </div>
+            <div class="navbar">
+                <a href="/Codigo/HTML/QuinielaZo.html">Torneo</a>
+                <a href="/Codigo/HTML/chat.html">Chat</a>
+                <a href="/Codigo/HTML/recompensas.html">Recompensas</a>
+                <a href="#novedades">Novedades</a>
+                <a href="/Codigo/HTML/perfil.html">Perfil</a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="recompensas-section">
+            <h2 class="recompensas-title">Recompensas</h2>
+            <div class="recompensas-card">
+                <div class="recompensas-tabs">
+                    <button class="tab-btn active" id="tareasTab" onclick="showTab('tareas')">Tareas</button>
+                    <button class="tab-btn" id="insigniasTab" onclick="showTab('insignias')">Insignias</button>
+                </div>
+                <div class="tab-content" id="tareasContent">
+                    <div class="tareas-header">
+                        <h3>Tareas - Grupo A</h3>
+                        <button class="crear-tarea-btn" onclick="mostrarFormTarea()">+ Crear tarea</button>
+                    </div>
+                    <form class="crear-tarea-form" id="crearTareaForm" onsubmit="return agregarTarea(event)">
+                        <input type="text" id="nuevaTareaTitulo" placeholder="Título de la tarea" required maxlength="40">
+                        <textarea id="nuevaTareaDesc" placeholder="Descripción de la tarea" required maxlength="120"></textarea>
+                        <div class="form-actions">
+                            <button type="submit">Agregar</button>
+                            <button type="button" class="cancelar" onclick="ocultarFormTarea()">Cancelar</button>
+                        </div>
+                    </form>
+                    <div class="tarea-list" id="tareaList">
+                        <!-- Las tareas se generan por JS -->
+                    </div>
+                    <div class="progreso-box">
+                        <div class="progreso-bar">
+                            <div class="progreso-bar-inner" id="progresoBar"></div>
+                        </div>
+                        <span id="progresoTexto">0/0 tareas completadas</span>
+                    </div>
+                </div>
+                <div class="tab-content" id="insigniasContent" style="display:none;">
+                    <div class="insignias-grid">
+                        <div class="insignia-box"><span class="insignia-cruz">✚</span></div>
+                        <div class="insignia-box"><span class="insignia-cruz">✚</span></div>
+                        <div class="insignia-box"><span class="insignia-cruz">✚</span></div>
+                        <div class="insignia-box"><span class="insignia-cruz">✚</span></div>
+                        <div class="insignia-box"><span class="insignia-cruz">✚</span></div>
+                        <div class="insignia-box"><span class="insignia-cruz">✚</span></div>
+                    </div>
+                    <div class="insignias-leyenda">
+                        Cada insignia tiene un valor de cierta cantidad de puntos.<br>
+                        ¡Gana insignias completando las tareas diarias y utilízalas para probar tu suerte en la siguiente quiniela!
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footerLinks">
+            <a href="#">Contacto</a>
+            <a href="#">Aviso de Privacidad</a>
+            <a href="#">Términos y Condiciones</a>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2026 QuinielaZo. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Tareas iniciales
+        let tareas = [
+            {
+                titulo: "Completa tu perfil",
+                desc: "Agrega tu información personal y una foto de perfil.",
+                completada: false
+            },
+            {
+                titulo: "Participa en tu primer torneo",
+                desc: "Ingresa a un torneo y realiza tus pronósticos.",
+                completada: false
+            },
+            {
+                titulo: "Invita a un amigo",
+                desc: "Comparte tu código de invitación y suma puntos extra.",
+                completada: false
+            },
+            {
+                titulo: "Gana tu primer partido",
+                desc: "Acumula puntos acertando un resultado.",
+                completada: false
+            }
+        ];
+
+        function showTab(tab) {
+            document.getElementById('tareasContent').style.display = (tab === 'tareas') ? 'block' : 'none';
+            document.getElementById('insigniasContent').style.display = (tab === 'insignias') ? 'block' : 'none';
+            document.getElementById('tareasTab').classList.toggle('active', tab === 'tareas');
+            document.getElementById('insigniasTab').classList.toggle('active', tab === 'insignias');
+        }
+
+        function renderTareas() {
+            const tareaList = document.getElementById('tareaList');
+            tareaList.innerHTML = '';
+            tareas.forEach((tarea, idx) => {
+                const tareaDiv = document.createElement('div');
+                tareaDiv.className = 'tarea-item';
+                tareaDiv.innerHTML = `
+                    <input type="checkbox" class="tarea-checkbox" ${tarea.completada ? 'checked' : ''} onchange="toggleTarea(${idx}, this)">
+                    <div class="tarea-desc">
+                        <strong>${tarea.titulo}</strong>
+                        <p>${tarea.desc}</p>
+                    </div>
+                    <span class="tarea-status ${tarea.completada ? 'completado' : ''}">${tarea.completada ? 'Completado' : 'No completado'}</span>
+                `;
+                tareaList.appendChild(tareaDiv);
+            });
+            updateProgreso();
+        }
+
+        function toggleTarea(idx, checkbox) {
+            tareas[idx].completada = checkbox.checked;
+            renderTareas();
+        }
+
+        function updateProgreso() {
+            const total = tareas.length;
+            const completadas = tareas.filter(t => t.completada).length;
+            const porcentaje = total === 0 ? 0 : (completadas / total) * 100;
+            document.getElementById('progresoBar').style.width = porcentaje + '%';
+            document.getElementById('progresoTexto').textContent = `${completadas}/${total} tareas completadas`;
+        }
+
+        function mostrarFormTarea() {
+            document.getElementById('crearTareaForm').style.display = 'flex';
+            document.getElementById('nuevaTareaTitulo').focus();
+        }
+
+        function ocultarFormTarea() {
+            document.getElementById('crearTareaForm').reset();
+            document.getElementById('crearTareaForm').style.display = 'none';
+        }
+
+        function agregarTarea(e) {
+            e.preventDefault();
+            const titulo = document.getElementById('nuevaTareaTitulo').value.trim();
+            const desc = document.getElementById('nuevaTareaDesc').value.trim();
+            if (titulo && desc) {
+                tareas.push({ titulo, desc, completada: false });
+                renderTareas();
+                ocultarFormTarea();
+            }
+            return false;
+        }
+
+        // Inicializa
+        document.addEventListener('DOMContentLoaded', function () {
+            renderTareas();
+        });
+    </script>
+</body>
+</html>

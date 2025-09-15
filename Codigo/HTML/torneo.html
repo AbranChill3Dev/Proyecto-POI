@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuinielaZo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="/Codigo/CSS/Styles.css">
+</head>
+
+<body>
+
+    <header>
+        <div class="head">
+            <div class="logo">
+                <a href="/Codigo/HTML/index.html">
+                    <img src="/Resources/Imagenes/QuinielazoLogo.png" alt="logo">
+                </a>
+            </div>
+
+            <div class="navbar">
+                <a href="/Codigo/HTML/torneo.html">Torneo</a>
+                <a href="/Codigo/HTML/chat.html">Chat</a>
+                <a href="/Codigo/HTML/recompensas.html">Recompensas</a>
+                <a href="#novedades">Novedades</a>
+                <a href="/Codigo/HTML/perfil.html">Perfil</a>
+            </div>
+        </div>
+    </header>
+
+        <main class="torneo-main-content">
+        <div class="torneo-tabs">
+            <a href="#" class="tab-item active-tab" data-tab="grupos">GRUPOS</a>
+            <a href="#" class="tab-item" data-tab="eliminacion">ELIMINACIÓN</a>
+        </div>
+
+        <section class="grupos-section active-content" id="grupos-content">
+            <div class="grupo-card">
+                <h3 class="grupo-titulo">GRUPO A</h3>
+                <div class="grupo-table-container">
+                    <table class="grupo-table">
+                        <thead>
+                            <tr>
+                                <th>EQUIPO</th>
+                                <th>PTS</th>
+                                <th>GF</th>
+                                <th>GC</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="equipo-cell">MX México</td>
+                                <td>6</td>
+                                <td>4</td>
+                                <td>1</td>
+                            </tr>
+                            <tr>
+                                <td class="equipo-cell">CA Canadá</td>
+                                <td>4</td>
+                                <td>3</td>
+                                <td>3</td>
+                            </tr>
+                            <tr>
+                                <td class="equipo-cell">JP Japón</td>
+                                <td>4</td>
+                                <td>2</td>
+                                <td>2</td>
+                            </tr>
+                            <tr>
+                                <td class="equipo-cell">GH Ghana</td>
+                                <td>3</td>
+                                <td>3</td>
+                                <td>6</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="grupo-card">
+                <h3 class="grupo-titulo">GRUPO B</h3>
+                <div class="grupo-table-container">
+                    <table class="grupo-table">
+                        <thead>
+                            <tr>
+                                <th>EQUIPO</th>
+                                <th>PTS</th>
+                                <th>GF</th>
+                                <th>GC</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="equipo-cell">US Estados Unidos</td>
+                                <td>7</td>
+                                <td>5</td>
+                                <td>2</td>
+                            </tr>
+                            <tr>
+                                <td class="equipo-cell">ES España</td>
+                                <td>4</td>
+                                <td>2</td>
+                                <td>2</td>
+                            </tr>
+                            <tr>
+                                <td class="equipo-cell">MA Marruecos</td>
+                                <td>4</td>
+                                <td>3</td>
+                                <td>4</td>
+                            </tr>
+                            <tr>
+                                <td class="equipo-cell">KR Korea</td>
+                                <td>1</td>
+                                <td>1</td>
+                                <td>3</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section class="eliminacion-section" id="eliminacion-content">
+            <div class="eliminacion-card-container">
+                <div class="eliminacion-card">
+                    <div class="equipo-eliminacion">
+                        <span class="codigo-pais">MX</span>
+                        <span class="nombre-equipo">México</span>
+                        <span class="marcador">2</span>
+                    </div>
+                    <div class="equipo-eliminacion">
+                        <span class="codigo-pais">ES</span>
+                        <span class="nombre-equipo">España</span>
+                        <span class="marcador">1</span>
+                    </div>
+                </div>
+                <div class="eliminacion-card">
+                    <div class="equipo-eliminacion">
+                        <span class="codigo-pais">UA</span>
+                        <span class="nombre-equipo">Estados Unidos</span>
+                        <span class="marcador">3</span>
+                    </div>
+                    <div class="equipo-eliminacion">
+                        <span class="codigo-pais">CA</span>
+                        <span class="nombre-equipo">Canadá</span>
+                        <span class="marcador">2</span>
+                    </div>
+                </div>
+                <div class="eliminacion-card">
+                    <div class="equipo-eliminacion">
+                        <span class="codigo-pais">AR</span>
+                        <span class="nombre-equipo">Argentina</span>
+                        <span class="marcador">1</span>
+                    </div>
+                    <div class="equipo-eliminacion">
+                        <span class="codigo-pais">DE</span>
+                        <span class="nombre-equipo">Alemania</span>
+                        <span class="marcador">1</span>
+                    </div>
+                </div>
+                <div class="eliminacion-card card-francia-japon">
+                    <div class="equipo-eliminacion">
+                        <span class="codigo-pais">FR</span>
+                        <span class="nombre-equipo">Francia</span>
+                        <span class="marcador">2</span>
+                    </div>
+                    <div class="equipo-eliminacion">
+                        <span class="codigo-pais">JP</span>
+                        <span class="nombre-equipo">Japón</span>
+                        <span class="marcador">0</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footerLinks">
+            <a href="#">Contacto</a>
+            <a href="#">Aviso de Privacidad</a>
+            <a href="#">Términos y Condiciones</a>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2026 QuinielaZo. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+        <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const tabs = document.querySelectorAll('.tab-item');
+            const sections = document.querySelectorAll('section[id$="-content"]');
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', (e) => {
+                    e.preventDefault();
+
+                    // Desactiva la pestaña activa actual y su contenido
+                    tabs.forEach(item => item.classList.remove('active-tab'));
+                    sections.forEach(sec => sec.classList.remove('active-content'));
+
+                    // Activa la pestaña clickeada
+                    e.target.classList.add('active-tab');
+
+                    // Muestra la sección de contenido correspondiente
+                    const targetId = e.target.dataset.tab;
+                    const targetSection = document.getElementById(targetId + '-content');
+                    if (targetSection) {
+                        targetSection.classList.add('active-content');
+                    }
+                });
+            });
+        });
+    </script>
+
+</body>
+
+</html>

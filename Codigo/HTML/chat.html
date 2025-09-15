@@ -1,18 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QuinielaZo</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200&display=swap" rel="stylesheet">
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="/Codigo/CSS/Styles.css">
 </head>
-
 <body>
-
     <header>
         <div class="head">
             <div class="logo">
@@ -20,13 +16,12 @@
                     <img src="/Resources/Imagenes/QuinielazoLogo.png" alt="logo">
                 </a>
             </div>
-
             <div class="navbar">
-                <a href="#torneo">Torneo</a>
+                <a href="/Codigo/HTML/QuinielaZo.html">Torneo</a>
                 <a href="/Codigo/HTML/chat.html">Chat</a>
-                <a href="#recompensas">Recompensas</a>
+                <a href="/Codigo/HTML/recompensas.html">Recompensas</a>
                 <a href="#novedades">Novedades</a>
-                <a href="#perfil">Perfil</a>
+                <a href="/Codigo/HTML/perfil.html">Perfil</a>
             </div>
         </div>
     </header>
@@ -35,35 +30,36 @@
         <div class="chatwrap">
             <div class="card chatlist">
                 <h3>Chats</h3>
-                <div class="chatitem">
-                    <div class="status online"></div>
-                    <div>
-                        <strong>Grupo A</strong>
-                        <p style="margin:4px 0 0">Octavos listos ✅</p>
+                <button class="crear-grupo-btn" onclick="mostrarFormGrupo()">+ Crear grupo</button>
+                <form class="crear-grupo-form" id="crearGrupoForm" onsubmit="return agregarGrupo(event)">
+                    <input type="text" id="nuevoGrupoNombre" placeholder="Nombre del grupo" required maxlength="30">
+                    <input type="text" id="nuevoGrupoUsuarios" placeholder="Usuarios (separados por coma)" required>
+                    <div class="form-actions">
+                        <button type="submit">Agregar</button>
+                        <button type="button" class="cancelar" onclick="ocultarFormGrupo()">Cancelar</button>
                     </div>
-                </div>
-                <div class="chatitem mt">
-                    <div class="status off"></div>
-                    <div>
-                        <strong>Privado • Rafa</strong>
-                        <p style="margin:4px 0 0">Nos vemos en la videollamada</p>
-                    </div>
+                </form>
+                <div id="chatListContainer">
+                    <!-- Lista de chats generada por JS -->
                 </div>
             </div>
             <div class="card" id="chatpane">
-                <h3 id="chatTitle">Grupo A</h3>
-                <div id="messages" style="min-height:280px;">
-                    <div class="bubble other">Bienvenidos al grupo 👋</div>
-                    <div class="bubble me">Hoy simulamos la jornada 3 ⚽</div>
-                    <div class="bubble other">Subo la tabla en un momento 📎</div>
+                <div class="chatbar">
+                    <div>
+                        <span id="chatTitle">Grupo A</span>
+                        <div id="privateStatus" class="private-status"></div>
+                    </div>
+                    <div class="chat-menu">
+                        <button class="menu-btn" onclick="toggleMenu()">☰</button>
+                        <div class="menu-dropdown" id="menuDropdown">
+                            <a href="#" onclick="showChat();return false;">💬 Chat</a>
+                            <a href="#" id="miembrosOption" onclick="showMiembros();return false;">👥 Ver miembros</a>
+                            <a href="#" onclick="showUbicacion();return false;">📍 Compartir ubicación</a>
+                        </div>
+                    </div>
                 </div>
-                <div class="compose">
-                    <input placeholder="Escribe un mensaje… (mock)" />
-                    <button class="btn">📷</button>
-                    <button class="btn">📎</button>
-                    <a href="/Codigo/HTML/videollamada.html">
-                        <button class="btn">🎥</button>
-                    </a>
+                <div id="chatContent">
+                    <!-- Mensajes y caja de texto se cargan por JS -->
                 </div>
             </div>
         </div>
@@ -80,6 +76,245 @@
         </div>
     </footer>
 
-</body>
+    <script>
+        // Datos simulados
+        let grupos = [
+            {
+                nombre: "Grupo A",
+                usuarios: [
+                    { nombre: "Usuario A", avatar: "/Resources/Imagenes/IconImage.jpg", online: true },
+                    { nombre: "Usuario B", avatar: "/Resources/Imagenes/IconImage.jpg", online: false },
+                    { nombre: "Tú", avatar: "/Resources/Imagenes/IconImage.jpg", online: true }
+                ],
+                mensajes: [
+                    { tipo: 'other', usuario: "Usuario A", texto: "Bienvenidos al grupo 👋" },
+                    { tipo: 'me', usuario: "Tú", texto: "Hoy simulamos la jornada 3 ⚽" },
+                    { tipo: 'other', usuario: "Usuario B", texto: "Subo la tabla en un momento 📎" }
+                ]
+            }
+        ];
 
+        let privados = [
+            {
+                nombre: "Privado • Rafa",
+                usuario: { nombre: "Rafa", avatar: "/Resources/Imagenes/IconImage.jpg", online: false },
+                mensajes: [
+                    { tipo: 'other', usuario: "Rafa", texto: "Hola 👋" },
+                    { tipo: 'me', usuario: "Tú", texto: "¡Hola Rafa!" }
+                ]
+            }
+        ];
+
+        let currentChat = { tipo: "grupo", idx: 0 };
+
+        function renderChatList() {
+            const cont = document.getElementById('chatListContainer');
+            cont.innerHTML = '';
+            grupos.forEach((g, i) => {
+                cont.innerHTML += `
+                    <div class="chatitem" onclick="selectChat('grupo',${i})">
+                        <div class="status ${g.usuarios.some(u=>u.online) ? 'online' : 'off'}"></div>
+                        <div>
+                            <strong>${g.nombre}</strong>
+                            <p style="margin:4px 0 0">${g.mensajes.length ? g.mensajes[g.mensajes.length-1].texto : 'Sin mensajes'}</p>
+                        </div>
+                    </div>
+                `;
+            });
+            privados.forEach((p, i) => {
+                cont.innerHTML += `
+                    <div class="chatitem mt" onclick="selectChat('privado',${i})">
+                        <div class="status ${p.usuario.online ? 'online' : 'off'}"></div>
+                        <div>
+                            <strong>${p.nombre}</strong>
+                            <p style="margin:4px 0 0">${p.mensajes.length ? p.mensajes[p.mensajes.length-1].texto : 'Sin mensajes'}</p>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function renderMensajes() {
+            let msgs, usuarios, isPrivado = currentChat.tipo === "privado";
+            if (isPrivado) {
+                msgs = privados[currentChat.idx].mensajes;
+                usuarios = [privados[currentChat.idx].usuario, {nombre:"Tú", avatar:"/Resources/Imagenes/IconImage.jpg", online:true}];
+            } else {
+                msgs = grupos[currentChat.idx].mensajes;
+                usuarios = grupos[currentChat.idx].usuarios;
+            }
+            let html = '<div id="messages">';
+            for (const msg of msgs) {
+                if (msg.tipo === 'ubicacion') {
+                    html += `
+                        <div class="bubble-row me">
+                            <img class="bubble-avatar" src="/Resources/Imagenes/IconImage.jpg" alt="Tú">
+                            <div class="bubble me" style="padding:8px;">
+                                <iframe
+                                    width="220" height="120"
+                                    style="border-radius:10px;border:none;box-shadow:0 2px 8px #82000055;"
+                                    src="https://www.google.com/maps?q=${msg.lat},${msg.lng}&hl=es&z=16&output=embed"
+                                    allowfullscreen>
+                                </iframe>
+                                <div style="font-size:0.95em;color:#ffd700;margin-top:6px;">Ubicación enviada</div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    let avatar = usuarios.find(u=>u.nombre===msg.usuario)?.avatar || "/Resources/Imagenes/IconImage.jpg";
+                    html += `
+                        <div class="bubble-row ${msg.tipo}">
+                            <img class="bubble-avatar" src="${avatar}" alt="${msg.usuario}">
+                            <div class="bubble ${msg.tipo}">${msg.texto}</div>
+                        </div>
+                    `;
+                }
+            }
+            html += '</div>' + composeBoxHTML();
+            document.getElementById('chatContent').innerHTML = html;
+        }
+
+        function composeBoxHTML() {
+            return `
+                <div class="compose">
+                    <input placeholder="Escribe un mensaje…" />
+                    <button class="btn">📷</button>
+                    <button class="btn">📎</button>
+                    <a href="/Codigo/HTML/videollamada.html">
+                        <button class="btn">🎥</button>
+                    </a>
+                </div>
+            `;
+        }
+
+        function toggleMenu() {
+            const menu = document.getElementById('menuDropdown');
+            menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
+        }
+        window.onclick = function (event) {
+            if (!event.target.matches('.menu-btn')) {
+                var dropdowns = document.getElementsByClassName("menu-dropdown");
+                for (var i = 0; i < dropdowns.length; i++) {
+                    var openDropdown = dropdowns[i];
+                    if (openDropdown.style.display === 'block') {
+                        openDropdown.style.display = 'none';
+                    }
+                }
+            }
+        }
+
+        function showChat() {
+            renderMensajes();
+            let isPrivado = currentChat.tipo === "privado";
+            document.getElementById('chatTitle').textContent = isPrivado ? privados[currentChat.idx].nombre : grupos[currentChat.idx].nombre;
+            document.getElementById('privateStatus').innerHTML = '';
+            if (isPrivado) {
+                document.getElementById('miembrosOption').style.display = 'none';
+                let user = privados[currentChat.idx].usuario;
+                document.getElementById('privateStatus').innerHTML = `
+                    <span class="estado-usuario">
+                        <span class="status ${user.online ? 'online' : 'off'}"></span>
+                        ${user.nombre} está ${user.online ? 'en línea' : 'desconectado'}
+                    </span>
+                `;
+            } else {
+                document.getElementById('miembrosOption').style.display = '';
+            }
+        }
+
+        function showMiembros() {
+            let usuarios = grupos[currentChat.idx].usuarios;
+            document.getElementById('chatContent').innerHTML = `
+                <div style="padding:32px 0;text-align:center;">
+                    <h3 style="color:#ffd700;margin-bottom:18px;">Miembros del grupo</h3>
+                    <div style="display:flex;justify-content:center;gap:32px;flex-wrap:wrap;">
+                        ${usuarios.map(u=>`
+                            <div>
+                                <img src="${u.avatar}" class="bubble-avatar" alt="${u.nombre}"><br>
+                                <span style="color:#fff;">${u.nombre}</span>
+                                <div class="status ${u.online ? 'online' : 'off'}" style="margin:4px auto 0 auto"></div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function showUbicacion() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+                    // Agrega el mensaje de ubicación al chat actual
+                    if (currentChat.tipo === "privado") {
+                        privados[currentChat.idx].mensajes.push({
+                            tipo: 'ubicacion',
+                            lat: lat,
+                            lng: lng
+                        });
+                    } else {
+                        grupos[currentChat.idx].mensajes.push({
+                            tipo: 'ubicacion',
+                            lat: lat,
+                            lng: lng
+                        });
+                    }
+                    renderMensajes();
+                    setTimeout(() => {
+                        const messagesDiv = document.getElementById('messages');
+                        if (messagesDiv) messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                    }, 100);
+                }, function () {
+                    alert('No se pudo obtener la ubicación.');
+                });
+            } else {
+                alert('Geolocalización no soportada.');
+            }
+        }
+
+        function selectChat(tipo, idx) {
+            currentChat = { tipo, idx };
+            showChat();
+        }
+
+        // Crear grupo
+        function mostrarFormGrupo() {
+            document.getElementById('crearGrupoForm').style.display = 'flex';
+            document.getElementById('nuevoGrupoNombre').focus();
+        }
+        function ocultarFormGrupo() {
+            document.getElementById('crearGrupoForm').reset();
+            document.getElementById('crearGrupoForm').style.display = 'none';
+        }
+        function agregarGrupo(e) {
+            e.preventDefault();
+            const nombre = document.getElementById('nuevoGrupoNombre').value.trim();
+            const usuariosStr = document.getElementById('nuevoGrupoUsuarios').value.trim();
+            if (nombre && usuariosStr) {
+                const usuarios = usuariosStr.split(',').map(u=>({
+                    nombre: u.trim(),
+                    avatar: "/Resources/Imagenes/IconImage.jpg",
+                    online: Math.random() > 0.5 // Simula estado aleatorio
+                }));
+                usuarios.push({nombre:"Tú", avatar:"/Resources/Imagenes/IconImage.jpg", online:true});
+                grupos.push({
+                    nombre,
+                    usuarios,
+                    mensajes: [
+                        { tipo: 'other', usuario: usuarios[0].nombre, texto: `¡Bienvenido a ${nombre}!` }
+                    ]
+                });
+                renderChatList();
+                ocultarFormGrupo();
+            }
+            return false;
+        }
+
+        // Inicializa
+        document.addEventListener('DOMContentLoaded', function () {
+            renderChatList();
+            showChat();
+        });
+    </script>
+</body>
 </html>
