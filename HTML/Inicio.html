@@ -7,9 +7,8 @@
     <title>Iniciar Sesión | QuinielaZo</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/Codigo/CSS/Styles.css">
+    <link rel="stylesheet" href="../CSS/Styles.css">
     <style>
-        /* --- AUTENTICACIÓN (LOGIN/REGISTRO) --- */
         .auth-container {
             background: rgba(0, 0, 0, 0.55);
             border-radius: 22px;
@@ -109,9 +108,9 @@
 <body>
     <div class="auth-container" id="loginBox">
         <h2>Iniciar Sesión</h2>
-        <form id="loginForm">
-            <label for="login-usuario">Usuario</label>
-            <input type="text" id="login-usuario" name="usuario" required autocomplete="username">
+        <form id="loginForm" method="post" action="../PHP/login.php">
+            <label for="login-correo">Correo electrónico</label>
+            <input type="email" id="login-correo" name="correo" required autocomplete="email">
 
             <label for="login-password">Contraseña</label>
             <input type="password" id="login-password" name="password" required autocomplete="current-password">
@@ -119,13 +118,13 @@
             <button type="submit" class="boton">Entrar</button>
         </form>
         <div class="switch-link">
-            ¿No tienes cuenta? <a onclick="showRegister()">Regístrate</a>
+            ¿No tienes cuenta? <a href="#" onclick="showRegister()">Regístrate</a>
         </div>
     </div>
 
     <div class="auth-container" id="registerBox" style="display:none;">
         <h2>Registro</h2>
-        <form>
+        <form id="registerForm" method="post" action="../PHP/registro.php">
             <label for="reg-nombre">Nombre</label>
             <input type="text" id="reg-nombre" name="nombre" required>
 
@@ -147,7 +146,7 @@
             <button type="submit" class="boton">Registrarse</button>
         </form>
         <div class="switch-link">
-            ¿Ya tienes cuenta? <a onclick="showLogin()">Inicia sesión</a>
+            ¿Ya tienes cuenta? <a href="#" onclick="showLogin()">Inicia sesión</a>
         </div>
     </div>
 
@@ -160,10 +159,8 @@
             document.getElementById('registerBox').style.display = 'none';
             document.getElementById('loginBox').style.display = 'flex';
         }
-        document.getElementById('loginForm').addEventListener('submit', function (e) {
-            e.preventDefault();
-            window.location.href = '/Codigo/HTML/index.html';
-        });
+        // Ya no necesitamos el script que redirigía, lo eliminamos.
+        // El 'action' del formulario se encargará de todo.
     </script>
 </body>
 

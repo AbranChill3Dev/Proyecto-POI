@@ -6,22 +6,22 @@
     <title>QuinielaZo</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/Codigo/CSS/Styles.css">
+    <link rel="stylesheet" href="../CSS/Styles.css">
 </head>
 <body>
     <header>
         <div class="head">
             <div class="logo">
-                <a href="/Codigo/HTML/index.html">
-                    <img src="/Resources/Imagenes/QuinielazoLogo.png" alt="logo">
+                <a href="index.html">
+                    <img src="../Resources/Imagenes/QuinielazoLogo.png" alt="logo">
                 </a>
             </div>
             <div class="navbar">
-                <a href="/Codigo/HTML/QuinielaZo.html">Torneo</a>
-                <a href="/Codigo/HTML/chat.html">Chat</a>
-                <a href="/Codigo/HTML/recompensas.html">Recompensas</a>
-                <a href="#novedades">Novedades</a>
-                <a href="/Codigo/HTML/perfil.html">Perfil</a>
+                <a href="QuinielaZo.html">Torneo</a>
+                <a href="chat.html">Chat</a>
+                <a href="recompensas.html">Recompensas</a>
+                <a href="Novedades.html">Novedades</a>
+                <a href="perfil.html">Perfil</a>
             </div>
         </div>
     </header>
@@ -82,9 +82,9 @@
             {
                 nombre: "Grupo A",
                 usuarios: [
-                    { nombre: "Usuario A", avatar: "/Resources/Imagenes/IconImage.jpg", online: true },
-                    { nombre: "Usuario B", avatar: "/Resources/Imagenes/IconImage.jpg", online: false },
-                    { nombre: "Tú", avatar: "/Resources/Imagenes/IconImage.jpg", online: true }
+                    { nombre: "Usuario A", avatar: "../Resources/Imagenes/IconImage.jpg", online: true },
+                    { nombre: "Usuario B", avatar: "../Resources/Imagenes/IconImage.jpg", online: false },
+                    { nombre: "Tú", avatar: "../Resources/Imagenes/IconImage.jpg", online: true }
                 ],
                 mensajes: [
                     { tipo: 'other', usuario: "Usuario A", texto: "Bienvenidos al grupo 👋" },
@@ -97,7 +97,7 @@
         let privados = [
             {
                 nombre: "Privado • Rafa",
-                usuario: { nombre: "Rafa", avatar: "/Resources/Imagenes/IconImage.jpg", online: false },
+                usuario: { nombre: "Rafa", avatar: "../Resources/Imagenes/IconImage.jpg", online: false },
                 mensajes: [
                     { tipo: 'other', usuario: "Rafa", texto: "Hola 👋" },
                     { tipo: 'me', usuario: "Tú", texto: "¡Hola Rafa!" }
@@ -138,7 +138,7 @@
             let msgs, usuarios, isPrivado = currentChat.tipo === "privado";
             if (isPrivado) {
                 msgs = privados[currentChat.idx].mensajes;
-                usuarios = [privados[currentChat.idx].usuario, {nombre:"Tú", avatar:"/Resources/Imagenes/IconImage.jpg", online:true}];
+                usuarios = [privados[currentChat.idx].usuario, {nombre:"Tú", avatar:"../Resources/Imagenes/IconImage.jpg", online:true}];
             } else {
                 msgs = grupos[currentChat.idx].mensajes;
                 usuarios = grupos[currentChat.idx].usuarios;
@@ -148,7 +148,7 @@
                 if (msg.tipo === 'ubicacion') {
                     html += `
                         <div class="bubble-row me">
-                            <img class="bubble-avatar" src="/Resources/Imagenes/IconImage.jpg" alt="Tú">
+                            <img class="bubble-avatar" src="../Resources/Imagenes/IconImage.jpg" alt="Tú">
                             <div class="bubble me" style="padding:8px;">
                                 <iframe
                                     width="220" height="120"
@@ -161,7 +161,7 @@
                         </div>
                     `;
                 } else {
-                    let avatar = usuarios.find(u=>u.nombre===msg.usuario)?.avatar || "/Resources/Imagenes/IconImage.jpg";
+                    let avatar = usuarios.find(u=>u.nombre===msg.usuario)?.avatar || "../Resources/Imagenes/IconImage.jpg";
                     html += `
                         <div class="bubble-row ${msg.tipo}">
                             <img class="bubble-avatar" src="${avatar}" alt="${msg.usuario}">
@@ -180,7 +180,7 @@
                     <input placeholder="Escribe un mensaje…" />
                     <button class="btn">📷</button>
                     <button class="btn">📎</button>
-                    <a href="/Codigo/HTML/videollamada.html">
+                    <a href="videollamada.html">
                         <button class="btn">🎥</button>
                     </a>
                 </div>
@@ -293,10 +293,10 @@
             if (nombre && usuariosStr) {
                 const usuarios = usuariosStr.split(',').map(u=>({
                     nombre: u.trim(),
-                    avatar: "/Resources/Imagenes/IconImage.jpg",
-                    online: Math.random() > 0.5 // Simula estado aleatorio
+                    avatar: "../Resources/Imagenes/IconImage.jpg",
+                    online: Math.random() > 0.5
                 }));
-                usuarios.push({nombre:"Tú", avatar:"/Resources/Imagenes/IconImage.jpg", online:true});
+                usuarios.push({nombre:"Tú", avatar:"../Resources/Imagenes/IconImage.jpg", online:true});
                 grupos.push({
                     nombre,
                     usuarios,

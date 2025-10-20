@@ -4,11 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QuinielaZo</title>
+    <title>Quiniela | QuinielaZo</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200&display=swap" rel="stylesheet">
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="/Codigo/CSS/Styles.css">
+    <link rel="stylesheet" href="../CSS/Styles.css">
 </head>
 
 <body>
@@ -16,25 +16,28 @@
     <header>
         <div class="head">
             <div class="logo">
-                <a href="/Codigo/HTML/index.html">
-                    <img src="/Resources/Imagenes/QuinielazoLogo.png" alt="logo">
+                <a href="index.html">
+                    <img src="../Resources/Imagenes/QuinielazoLogo.png" alt="logo">
                 </a>
             </div>
 
             <div class="navbar">
-                <a href="/Codigo/HTML/torneo.html">Torneo</a>
-                <a href="/Codigo/HTML/chat.html">Chat</a>
-                <a href="/Codigo/HTML/recompensas.html">Recompensas</a>
-                <a href="#novedades">Novedades</a>
-                <a href="/Codigo/HTML/perfil.html">Perfil</a>
+                <a href="QuinielaZo.html">Torneo</a>
+                <a href="chat.html">Chat</a>
+                <a href="recompensas.html">Recompensas</a>
+                <a href="Novedades.html">Novedades</a>
+                <a href="perfil.html">Perfil</a>
             </div>
         </div>
     </header>
 
-        <main class="torneo-main-content">
+    <main class="torneo-main-content">
         <div class="torneo-tabs">
             <a href="#" class="tab-item active-tab" data-tab="grupos">GRUPOS</a>
             <a href="#" class="tab-item" data-tab="eliminacion">ELIMINACIÓN</a>
+            <a href="#" class="tab-item" data-tab="quiniela">QUINIELA</a>
+            <a href="#" class="tab-item" data-tab="historial">HISTORIAL</a>
+            <a href="#" class="tab-item" data-tab="resultados">RESULTADOS</a>
         </div>
 
         <section class="grupos-section active-content" id="grupos-content">
@@ -79,7 +82,6 @@
                     </table>
                 </div>
             </div>
-
             <div class="grupo-card">
                 <h3 class="grupo-titulo">GRUPO B</h3>
                 <div class="grupo-table-container">
@@ -175,7 +177,99 @@
                 </div>
             </div>
         </section>
+
+        <section class="quiniela-section" id="quiniela-content">
+            <div class="quiniela-menu-view active-view" id="quiniela-menu-view">
+                <h3 class="quiniela-menu-titulo">Elige una quiniela</h3>
+                <div class="quiniela-jornada-card" data-jornada="1">
+                    <h4 class="jornada-titulo">Jornada 1</h4>
+                    <p class="jornada-info">Pronostica los partidos de la primera ronda.</p>
+                </div>
+                <div class="quiniela-jornada-card" data-jornada="2">
+                    <h4 class="jornada-titulo">Jornada 2</h4>
+                    <p class="jornada-info">¡Nuevos partidos disponibles!</p>
+                </div>
+            </div>
+
+            <div class="quiniela-form-view" id="quiniela-form-view">
+                <h3 class="quiniela-form-titulo">Quiniela <span id="jornada-title"></span></h3>
+                <div class="partido-card">
+                    <h4 class="partido-titulo">México vs Japón</h4>
+                    <div class="equipo-quiniela">
+                        <span class="nombre-equipo-quiniela">México</span>
+                        <input type="number" class="quiniela-input" min="0">
+                    </div>
+                    <div class="equipo-quiniela">
+                        <span class="nombre-equipo-quiniela">Japón</span>
+                        <input type="number" class="quiniela-input" min="0">
+                    </div>
+                </div>
+                <div class="partido-card">
+                    <h4 class="partido-titulo">Estados Unidos vs España</h4>
+                    <div class="equipo-quiniela">
+                        <span class="nombre-equipo-quiniela">Estados Unidos</span>
+                        <input type="number" class="quiniela-input" min="0">
+                    </div>
+                    <div class="equipo-quiniela">
+                        <span class="nombre-equipo-quiniela">España</span>
+                        <input type="number" class="quiniela-input" min="0">
+                    </div>
+                </div>
+                <button class="submit-button">Enviar Quiniela</button>
+                <button class="back-button"><i class="fas fa-arrow-left"></i> Regresar</button>
+            </div>
+        </section>
+
+        <section class="historial-section" id="historial-content">
+            <div class="historial-card">
+                <h4 class="historial-title">Quiniela enviada el 15/09/2025</h4>
+                <p class="historial-subtitle">Jornada 1</p>
+                <div class="historial-partido">
+                    <span class="historial-equipo">México</span>
+                    <span class="historial-pronostico">2</span>
+                    <span style="font-size: 0.8em; color: #999;">-</span>
+                    <span class="historial-pronostico">1</span>
+                    <span class="historial-equipo">Japón</span>
+                </div>
+                <div class="historial-partido">
+                    <span class="historial-equipo">Estados Unidos</span>
+                    <span class="historial-pronostico">3</span>
+                    <span style="font-size: 0.8em; color: #999;">-</span>
+                    <span class="historial-pronostico">2</span>
+                    <span class="historial-equipo">España</span>
+                </div>
+            </div>
+            <div class="historial-card">
+                <h4 class="historial-title">Quiniela enviada el 14/09/2025</h4>
+                <p class="historial-subtitle">Jornada 0</p>
+                <div class="historial-partido">
+                    <span class="historial-equipo">Argentina</span>
+                    <span class="historial-pronostico">1</span>
+                    <span style="font-size: 0.8em; color: #999;">-</span>
+                    <span class="historial-pronostico">1</span>
+                    <span class="historial-equipo">Alemania</span>
+                </div>
+                <div class="historial-partido">
+                    <span class="historial-equipo">Francia</span>
+                    <span class="historial-pronostico">2</span>
+                    <span style="font-size: 0.8em; color: #999;">-</span>
+                    <span class="historial-pronostico">0</span>
+                    <span class="historial-equipo">Japón</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="resultados-section" id="resultados-content">
+            <div class="resultados-vacio-card">
+                <h4 class="resultados-vacio-titulo">¡Aún no hay resultados!</h4>
+                <p class="resultados-vacio-texto">Regresa más tarde para ver los resultados oficiales de la jornada.</p>
+            </div>
+        </section>
     </main>
+
+    <div id="notification-message" class="notification">
+        ¡Quiniela enviada con éxito! 🎉
+    </div>
 
     <footer>
         <div class="footerLinks">
@@ -188,33 +282,68 @@
         </div>
     </footer>
 
-        <script>
+    <script>
         document.addEventListener('DOMContentLoaded', () => {
             const tabs = document.querySelectorAll('.tab-item');
             const sections = document.querySelectorAll('section[id$="-content"]');
+            
+            const quinielaMenu = document.getElementById('quiniela-menu-view');
+            const quinielaForm = document.getElementById('quiniela-form-view');
+            const jornadaCards = document.querySelectorAll('.quiniela-jornada-card');
+            const backButton = document.querySelector('.back-button');
+            const submitButton = document.querySelector('.submit-button');
+            const notification = document.getElementById('notification-message');
+            const jornadaTitle = document.getElementById('jornada-title');
 
             tabs.forEach(tab => {
                 tab.addEventListener('click', (e) => {
                     e.preventDefault();
 
-                    // Desactiva la pestaña activa actual y su contenido
                     tabs.forEach(item => item.classList.remove('active-tab'));
                     sections.forEach(sec => sec.classList.remove('active-content'));
 
-                    // Activa la pestaña clickeada
                     e.target.classList.add('active-tab');
 
-                    // Muestra la sección de contenido correspondiente
                     const targetId = e.target.dataset.tab;
                     const targetSection = document.getElementById(targetId + '-content');
                     if (targetSection) {
                         targetSection.classList.add('active-content');
+                        
+                        // Si se hace clic en la pestaña de quiniela, muestra el menú inicial
+                        if (targetId === 'quiniela') {
+                            quinielaMenu.classList.add('active-view');
+                            quinielaForm.classList.remove('active-view');
+                        }
                     }
                 });
             });
+
+            jornadaCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    const jornada = card.dataset.jornada;
+                    jornadaTitle.textContent = `Jornada ${jornada}`;
+                    quinielaMenu.classList.remove('active-view');
+                    quinielaForm.classList.add('active-view');
+                });
+            });
+
+            if (backButton) {
+                backButton.addEventListener('click', () => {
+                    quinielaForm.classList.remove('active-view');
+                    quinielaMenu.classList.add('active-view');
+                });
+            }
+            
+            if (submitButton) {
+                submitButton.addEventListener('click', () => {
+                    notification.classList.add('show');
+                    setTimeout(() => {
+                        notification.classList.remove('show');
+                    }, 3000);
+                });
+            }
         });
     </script>
-
 </body>
 
 </html>

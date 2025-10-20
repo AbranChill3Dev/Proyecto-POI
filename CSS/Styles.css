@@ -215,6 +215,8 @@ header {
 }
 
 .section {
+    align-items: center;
+    text-justify: ce;
     margin: 20px auto 20px auto;
     max-width: 800px;
     background-color: rgba(139, 0, 0, 0.6);
