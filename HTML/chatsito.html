@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuinielaZo - Chat</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../CSS/Styles.css">
+    <style>
+        #chatpane {
+            display: flex;
+            flex-direction: column;
+            height: 600px;
+            max-height: 80vh;
+            background: rgba(0, 0, 0, 0.55);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(130, 0, 0, 0.22);
+            padding: 16px;
+            color: #fff;
+            flex: 1;
+        }
+
+        #chatContent {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        #messages {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding: 8px;
+        }
+
+        #chatForm {
+            display: flex;
+            gap: 10px;
+            padding-top: 10px;
+        }
+
+        #chatInput {
+            flex: 1;
+            padding: 12px 16px;
+            border-radius: 20px;
+            border: none;
+            outline: none;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-size: 16px;
+        }
+
+        #chatInput::placeholder {
+            color: #ccc;
+        }
+
+        #chatForm button {
+            padding: 12px 20px;
+            border-radius: 20px;
+            border: none;
+            background: #a80000;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        #messages::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        #messages::-webkit-scrollbar-thumb {
+            background: #820000;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="head">
+            <div class="logo"><a href="index.html"><img src="../Resources/Imagenes/QuinielazoLogo.png" alt="logo"></a>
+            </div>
+            <div class="navbar">
+                <a href="QuinielaZo.html">Torneo</a>
+                <a href="chatsito.html">Chat</a>
+                <a href="recompensas.html">Recompensas</a>
+                <a href="Novedades.html">Novedades</a>
+                <a href="perfil.html">Perfil</a>
+            </div>
+        </div>
+    </header>
+
+    <section class="screen" id="chats">
+        <div class="chatwrap">
+            <div class="card chatlist">
+                <h3>Chats</h3>
+                <button class="crear-grupo-btn" onclick="mostrarFormGrupo()">+ Crear grupo</button>
+                <form class="crear-grupo-form" id="crearGrupoForm" onsubmit="return agregarGrupo(event)">
+                    <input type="text" id="nuevoGrupoNombre" placeholder="Nombre del grupo" required maxlength="30">
+                    <input type="text" id="nuevoGrupoUsuarios" placeholder="Usuarios (separados por coma)" required>
+                    <div class="form-actions">
+                        <button type="submit">Agregar</button>
+                        <button type="button" class="cancelar" onclick="ocultarFormGrupo()">Cancelar</button>
+                    </div>
+                </form>
+                <div id="chatListContainer"></div>
+            </div>
+
+            <div class="card" id="chatpane">
+                <div class="chatbar"><span id="chatTitle">Grupo A</span></div>
+                <div id="chatContent"></div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footerLinks">
+            <a href="#">Contacto</a>
+            <a href="#">Aviso de Privacidad</a>
+            <a href="#">Términos y Condiciones</a>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2026 QuinielaZo. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script type="module">
+        import { io } from 'https://cdn.socket.io/4.3.2/socket.io.esm.min.js';
+
+        const ipLocal = "192.168.0.5";
+        const socket = io(window.location.hostname === "localhost"
+            ? "http://localhost:3000"
+            : `http://${ipLocal}:3000`
+        );
+
+        const myName = localStorage.getItem('usuario');
+        const myId = localStorage.getItem('userId');
+
+        if (!myName || !myId) {
+            alert("Inicia sesión primero.");
+            window.location.href = "../HTML/inicio.html";
+        }
+
+        let currentChat = "global"; // modo chat global o individual
+        const chatListContainer = document.getElementById('chatListContainer');
+        const chatContent = document.getElementById('chatContent');
+
+        // =======================
+        //   CARGAR USUARIOS
+        // =======================
+        async function cargarUsuarios() {
+            try {
+                const res = await fetch(`http://192.168.0.5:3000/usuarios/${myId}`);
+                const usuarios = await res.json();
+
+                chatListContainer.innerHTML = `<div class="chatitem" onclick="selectChat('global', 0)">
+            💬 <strong>Chat Global</strong></div>`;
+
+                usuarios.forEach(u => {
+                    const div = document.createElement('div');
+                    div.classList.add('chatitem');
+                    div.textContent = u.usuario;
+                    div.onclick = () => selectChat(u.id_usuario, u.usuario);
+                    chatListContainer.appendChild(div);
+                });
+            } catch (err) {
+                console.error('Error al cargar usuarios:', err);
+            }
+        }
+
+        // =======================
+        //   CARGAR MENSAJES
+        // =======================
+        async function cargarMensajes() {
+            try {
+                const res = await fetch(`http://192.168.0.5:3000/mensajes/${myId}`);
+                const mensajes = await res.json();
+                const messagesDiv = document.getElementById('messages');
+                messagesDiv.innerHTML = '';
+
+                mensajes.forEach(m => {
+                    addMessage(m.mensaje, m.usuario === myName ? 'me' : 'other', m.usuario);
+                });
+            } catch (err) {
+                console.error('Error al cargar mensajes:', err);
+            }
+        }
+
+        // =======================
+        //   RENDER CHAT
+        // =======================
+        function renderMensajes() {
+            chatContent.innerHTML = `
+        <div id="messages"></div>
+        <form id="chatForm">
+            <input id="chatInput" placeholder="Escribe un mensaje…" autocomplete="off" />
+            <button type="submit">Enviar</button>
+        </form>
+    `;
+
+            const form = document.getElementById('chatForm');
+            const input = document.getElementById('chatInput');
+
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const msg = input.value.trim();
+                if (!msg) return;
+
+                addMessage(msg, 'me', myName);
+                socket.emit('chat message', { id_usuario: myId, usuario: myName, mensaje: msg });
+                input.value = '';
+            });
+
+            // Escuchar mensajes nuevos
+            socket.off('chat message');
+            socket.on('chat message', (data) => {
+                if (data.usuario === myName) return; // evita duplicados
+                addMessage(data.mensaje, 'other', data.usuario);
+            });
+
+            // Cargar mensajes anteriores
+            cargarMensajes();
+        }
+
+        // =======================
+        //   AGREGAR MENSAJE
+        // =======================
+        function addMessage(msg, tipo, usuario) {
+            const messagesDiv = document.getElementById('messages');
+            const wrapper = document.createElement('div');
+            wrapper.style.display = 'flex';
+            wrapper.style.flexDirection = 'column';
+            wrapper.style.maxWidth = '70%';
+            wrapper.style.marginBottom = '8px';
+            wrapper.style.alignSelf = tipo === 'me' ? 'flex-end' : 'flex-start';
+
+            const userTag = document.createElement('span');
+            userTag.textContent = usuario;
+            userTag.style.fontSize = '12px';
+            userTag.style.color = '#ccc';
+            userTag.style.marginBottom = '4px';
+            wrapper.appendChild(userTag);
+
+            const bubble = document.createElement('div');
+            bubble.textContent = msg;
+            bubble.style.padding = '10px 14px';
+            bubble.style.borderRadius = '16px';
+            bubble.style.color = '#fff';
+            bubble.style.wordWrap = 'break-word';
+            bubble.style.background = tipo === 'me' ? '#820000' : '#333';
+            wrapper.appendChild(bubble);
+
+            messagesDiv.appendChild(wrapper);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        // =======================
+        //   SELECCIONAR CHAT
+        // =======================
+        window.selectChat = function (id, nombre) {
+            currentChat = id;
+            document.getElementById('chatTitle').textContent = nombre === 0 ? 'Chat Global' : nombre;
+            renderMensajes();
+        };
+
+        // =======================
+        //   INICIALIZAR
+        // =======================
+        document.addEventListener('DOMContentLoaded', () => {
+            cargarUsuarios();
+            renderMensajes();
+        });
+    </script>
+
+
+
+</body>
+
+</html>

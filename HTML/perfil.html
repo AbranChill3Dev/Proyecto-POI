@@ -12,13 +12,11 @@
     <header>
         <div class="head">
             <div class="logo">
-                <a href="index.html">
-                    <img src="../Resources/Imagenes/QuinielazoLogo.png" alt="logo">
-                </a>
+                <a href="index.html"><img src="../Resources/Imagenes/QuinielazoLogo.png" alt="logo"></a>
             </div>
             <div class="navbar">
                 <a href="QuinielaZo.html">Torneo</a>
-                <a href="chat.html">Chat</a>
+                <a href="chatsito.html">Chat</a>
                 <a href="recompensas.html">Recompensas</a>
                 <a href="Novedades.html">Novedades</a>
                 <a href="perfil.html">Perfil</a>
@@ -28,77 +26,101 @@
 
     <main>
         <section class="perfil-main">
-            <!-- Recuadro izquierdo -->
             <div class="perfil-card perfil-card-left">
                 <h2 class="perfil-titulo">Mi cuenta</h2>
                 <div class="perfil-foto">
-                    <img src="../Resources/Imagenes/IconImage.jpg" alt="Foto de perfil">
+                    <img id="perfil-img" src="../Resources/Imagenes/IconImage.jpg" alt="Foto de perfil">
                 </div>
-                <div class="perfil-campo">
-                    <label>Nombre:</label>
-                    <div class="perfil-input">Juan</div>
+                <div class="perfil-campo"><label>Nombre:</label>
+                    <div id="perfil-nombre">Cargando...</div>
                 </div>
-                <div class="perfil-campo">
-                    <label>Apellido:</label>
-                    <div class="perfil-input">Pérez</div>
+                <div class="perfil-campo"><label>Apellido:</label>
+                    <div id="perfil-apellido">Cargando...</div>
                 </div>
-                <div class="perfil-campo">
-                    <label>Usuario:</label>
-                    <div class="perfil-input">juanperez</div>
+                <div class="perfil-campo"><label>Usuario:</label>
+                    <div id="perfil-usuario">Cargando...</div>
                 </div>
             </div>
-            <!-- Recuadro derecho -->
+
             <div class="perfil-card perfil-card-right">
                 <h2 class="perfil-titulo">Información General</h2>
-                <div class="perfil-campo">
-                    <label>Correo electrónico:</label>
-                    <div class="perfil-input perfil-input-largo">juan.perez@email.com</div>
+                <div class="perfil-campo"><label>Correo electrónico:</label>
+                    <div id="perfil-correo">Cargando...</div>
                 </div>
                 <div class="perfil-campo perfil-campo-inline">
-                    <div>
-                        <label>Edad:</label>
-                        <div class="perfil-input perfil-input-corto">22</div>
+                    <div><label>Edad:</label>
+                        <div id="perfil-edad">...</div>
                     </div>
-                    <div>
-                        <label>Fecha de nacimiento:</label>
-                        <div class="perfil-input perfil-input-corto">2002-01-01</div>
-                    </div>
-                </div>
-                <div class="perfil-campo">
-                    <label>Puntos:</label>
-                    <div class="perfil-input perfil-input-largo">0</div>
-                </div>
-                <div class="perfil-stats">
-                    <div>
-                        <div class="stat-label stat-victorias">Victorias</div>
-                        <div class="stat-box">0</div>
-                    </div>
-                    <div>
-                        <div class="stat-label stat-empates">Empates</div>
-                        <div class="stat-box">0</div>
-                    </div>
-                    <div>
-                        <div class="stat-label stat-derrotas">Derrotas</div>
-                        <div class="stat-box">0</div>
+                    <div><label>Fecha de nacimiento:</label>
+                        <div id="perfil-fecha-nacimiento">Cargando...</div>
                     </div>
                 </div>
             </div>
         </section>
         <a href="Inicio.html">
-            <button class="boton-cerrar-sesion">Cerrar Sesión</button>
+            <button id="logout-button" class="boton-cerrar-sesion">Cerrar Sesión</button>
         </a>
     </main>
 
-    <footer>
-        <div class="footerLinks">
-            <a href="#">Contacto</a>
-            <a href="#">Aviso de Privacidad</a>
-            <a href="#">Términos y Condiciones</a>
-        </div>
-        <div class="copyright">
-            <p>&copy; 2026 QuinielaZo. Todos los derechos reservados.</p>
-        </div>
-    </footer>
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+        alert("No has iniciado sesión.");
+        window.location.href = 'inicio.html';
+        return;
+    }
+
+    try {
+        const res = await fetch(`http://192.168.0.5:3000/profile/${userId}`);
+        if (!res.ok) throw new Error('Error al cargar perfil');
+
+        const data = await res.json();
+
+        document.getElementById('perfil-nombre').textContent = data.nombres;
+        document.getElementById('perfil-apellido').textContent = data.apellidos;
+        document.getElementById('perfil-usuario').textContent = data.usuario;
+        document.getElementById('perfil-correo').textContent = data.correo;
+
+        document.getElementById('perfil-img').src = data.foto || '../Resources/Imagenes/IconImage.jpg';
+
+        const fecha = new Date(data.fechaNacimiento);
+        const hoy = new Date();
+        let edad = hoy.getFullYear() - fecha.getFullYear();
+        if (hoy.getMonth() < fecha.getMonth() || (hoy.getMonth() === fecha.getMonth() && hoy.getDate() < fecha.getDate())) edad--;
+        document.getElementById('perfil-edad').textContent = edad;
+        document.getElementById('perfil-fecha-nacimiento').textContent = fecha.toLocaleDateString('es-ES');
+
+    } catch (err) {
+        console.error(err);
+        alert('No se pudieron cargar los datos del perfil.');
+    }
+});
+
+// --- LOGOUT ---
+document.getElementById('logout-button').addEventListener('click', async () => {
+    const userId = localStorage.getItem('userId');
+    if (!userId) return window.location.href = 'inicio.html';
+
+    try {
+        const res = await fetch('http://192.168.0.5:3000/logout', {
+            method: 'POST',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({ id_usuario: userId })
+        });
+        if (!res.ok) throw new Error('Error al cerrar sesión');
+
+        localStorage.removeItem('userId'); // limpiar sesión local
+        alert('Sesión cerrada correctamente');
+        window.location.href = 'inicio.html';
+    } catch (err) {
+        console.error(err);
+        alert('No se pudo cerrar la sesión');
+    }
+});
+</script>
+
+
 </body>
 
 </html>

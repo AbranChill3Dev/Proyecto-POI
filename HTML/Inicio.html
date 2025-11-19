@@ -102,13 +102,27 @@
                 max-width: 98vw;
             }
         }
+
+        @keyframes fadeZoom {
+            0% {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
     </style>
 </head>
 
 <body>
+
+    <!-- Login -->
     <div class="auth-container" id="loginBox">
         <h2>Iniciar Sesión</h2>
-        <form id="loginForm" method="post" action="../PHP/login.php">
+        <form id="loginForm">
             <label for="login-correo">Correo electrónico</label>
             <input type="email" id="login-correo" name="correo" required autocomplete="email">
 
@@ -122,9 +136,10 @@
         </div>
     </div>
 
+    <!-- Registro -->
     <div class="auth-container" id="registerBox" style="display:none;">
         <h2>Registro</h2>
-        <form id="registerForm" method="post" action="../PHP/registro.php">
+        <form id="registerForm">
             <label for="reg-nombre">Nombre</label>
             <input type="text" id="reg-nombre" name="nombre" required>
 
@@ -151,17 +166,80 @@
     </div>
 
     <script>
+        // Mostrar/ocultar formularios
         function showRegister() {
             document.getElementById('loginBox').style.display = 'none';
             document.getElementById('registerBox').style.display = 'flex';
         }
+
         function showLogin() {
             document.getElementById('registerBox').style.display = 'none';
             document.getElementById('loginBox').style.display = 'flex';
         }
-        // Ya no necesitamos el script que redirigía, lo eliminamos.
-        // El 'action' del formulario se encargará de todo.
+
+        // --- LOGIN ---
+        const loginForm = document.getElementById('loginForm');
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const correo = document.getElementById('login-correo').value;
+            const password = document.getElementById('login-password').value;
+
+            try {
+                const res = await fetch('http://192.168.0.5:3000/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ correo, password })
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    // Guardamos ambos: id y nombre de usuario
+                    localStorage.setItem('userId', data.id_usuario);
+                    localStorage.setItem('usuario', data.usuario); // <--- esta línea faltaba
+                    window.location.href = `http://192.168.0.5:3000/HTML/perfil.html`;
+                }
+                else {
+                    const errorData = await res.json();
+                    alert(errorData.message || 'Error al iniciar sesión');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Error al conectarse con el servidor.');
+            }
+        });
+
+        // --- REGISTRO ---s
+        const registerForm = document.getElementById('registerForm');
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const nombre = document.getElementById('reg-nombre').value;
+            const apellido = document.getElementById('reg-apellido').value;
+            const fecha = document.getElementById('reg-fecha').value;
+            const email = document.getElementById('reg-email').value;
+            const usuario = document.getElementById('reg-usuario').value;
+            const password = document.getElementById('reg-password').value;
+
+            try {
+                const res = await fetch('http://192.168.0.5:3000/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nombre, apellido, fecha, email, usuario, password })
+                });
+
+                if (res.ok) {
+                    alert('Registro exitoso, ahora puedes iniciar sesión');
+                    showLogin();
+                } else {
+                    const errorData = await res.json();
+                    alert(errorData.message || 'Error en el registro');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Error al conectarse con el servidor.');
+            }
+        });
     </script>
+
 </body>
 
 </html>
