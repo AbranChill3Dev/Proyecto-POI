@@ -11,7 +11,7 @@ import { fileURLToPath } from 'url';
 import crypto from 'crypto';
 import multer from 'multer';
 import { v4 as uuidv4 } from 'uuid';
-import fs from 'fs'; 
+import fs from 'fs';
 
 
 // ---------------- CONFIGURACIÓN DE RUTAS Y MÓDULOS ES ----------------
@@ -30,6 +30,8 @@ app.use(cors());
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static('public'));
+
 
 // ---------------- CONFIGURACIÓN DE ENCRIPTACIÓN AES ----------------
 const ENCRYPTION_KEY = crypto.scryptSync('mi-clave-ultra-secreta-32-chars', 'salt', 32); // Clave de 32 bytes (AES-256)
@@ -122,6 +124,8 @@ const io = new Server(server, {
     }
 });
 
+const users = {};
+
 io.on('connection', (socket) => {
     console.log('🟢 Nuevo cliente conectado:', socket.id);
 
@@ -165,18 +169,18 @@ io.on('connection', (socket) => {
         const id_usuario = socketUserMap[socket.id];
 
         if (id_usuario) {
-            
+
             // Si el usuario aún estaba en el mapa (no se desconectó manualmente), lo marcamos inactivo.
             if (userSocketMap[id_usuario]) {
                 connection.query('UPDATE Usuario SET activo = 1 WHERE id_usuario = ?', [id_usuario], (err) => {
                     if (err) console.error("❌ Error al actualizar 'activo' en logout:", err);
                 });
             }
-            
+
             // Limpieza final de mapas
             delete userSocketMap[id_usuario];
             delete socketUserMap[socket.id];
-            
+
             io.emit('online users', Object.keys(userSocketMap));
         }
     });
@@ -227,7 +231,7 @@ io.on('connection', (socket) => {
                 mensaje: mensaje,
                 id_usuario: id_remitente,
                 fecha_envio: new Date().toISOString(),
-                id_mensaje: resultMensaje.insertId 
+                id_mensaje: resultMensaje.insertId
             };
 
             // B. Enviar mensaje de vuelta al remitente (usando su socket ID)
@@ -242,6 +246,67 @@ io.on('connection', (socket) => {
             }
         });
     });
+
+    // --- EVENTOS PARA VIDEOLLAMADAS ---
+    socket.on('call:user', ({ to, from, fromName }) => {
+        const targetSocket = userSocketMap[to];
+        if (targetSocket) {
+            io.to(targetSocket).emit('call:incoming', {
+                from,
+                fromName
+            });
+        }
+    });
+
+    socket.on('call:accepted', (data) => {
+        const targetSocket = userSocketMap[data.from];
+        if (targetSocket) {
+            io.to(targetSocket).emit('call:accepted', data);
+        }
+    });
+
+    socket.on('call:rejected', (data) => {
+        const targetSocket = userSocketMap[data.from];
+        if (targetSocket) {
+            io.to(targetSocket).emit('call:rejected', data);
+        }
+    });
+
+    // ---------------- WEBRTC SEÑALIZACIÓN ----------------
+
+    // Cuando un usuario envía una oferta (offer)
+    socket.on('call:offer', ({ to, offer }) => {
+        const targetSocketId = userSocketMap[to];
+        if (targetSocketId) {
+            io.to(targetSocketId).emit('call:offer', {
+                from: socketUserMap[socket.id],
+                offer
+            });
+        }
+    });
+
+    socket.on('call:answer', ({ to, answer }) => {
+        const targetSocketId = userSocketMap[to];
+        if (targetSocketId) {
+            io.to(targetSocketId).emit('call:answer', {
+                from: socketUserMap[socket.id],
+                answer
+            });
+        }
+    });
+
+    socket.on('call:ice-candidate', ({ to, candidate }) => {
+        const targetSocketId = userSocketMap[to];
+        if (targetSocketId) {
+            io.to(targetSocketId).emit('call:ice-candidate', {
+                from: socketUserMap[socket.id],
+                candidate
+            });
+        }
+    });
+
+
+
 });
 
 

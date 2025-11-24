@@ -8,328 +8,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../CSS/Styles.css">
-    <style>
-    /* VARIABLES DE COLOR PROFESIONAL ROJO/OSCURO */
-    :root {
-        --color-primary: #E53935;     /* Rojo Vibrante - Énfasis */
-        --color-tertiary: #1a1a1a;    /* Gris Oscuro - Para paneles */
-        --color-text-main: #FFFFFF;   
-        --color-text-secondary: #AAAAAA; 
-        --color-status-online: #43A047; 
-        --color-status-offline: #555555; 
-        --chat-me-bg: #820000;        /* Rojo base de tu gradiente */
-        --chat-other-bg: #333333;     /* Gris oscuro */
-    }
-
-    /* Estilos Generales y Layout */
-    .chatwrap {
-        display: flex;
-        gap: 20px;
-        max-width: 1200px;
-        margin: 20px auto;
-        /* *************************************** */
-        /* CORRECCIÓN CLAVE 1: Usar min-height en lugar de height */
-        /* Esto permite que el contenedor se ajuste a la altura del contenido si es menor */
-        min-height: 80vh; 
-        max-height: 85vh; /* Opcional: mantener un límite máximo */
-        /* *************************************** */
-    }
-
-    /* PANELES DE CHAT Y LISTA */
-    .card {
-        background: var(--color-tertiary);
-        border-radius: 12px;
-        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.6);
-        color: var(--color-text-main);
-        /* CORRECCIÓN CLAVE 2: Asegurar que los paneles crecen y se ajustan */
-        height: 100%; /* Permite que el chatlist y chatpane ocupen el 85vh del chatwrap */
-        display: flex;
-        flex-direction: column;
-    }
-
-    /* --- LISTA DE CHATS Y USUARIOS --- */
-    .chatlist {
-        width: 300px;
-        min-width: 250px;
-        padding: 15px;
-        overflow-y: auto;
-    }
-    
-    /* El resto de estilos de .chatlist, h3, .chatitem, etc. (sin cambios) */
-
-    .chatlist h3 {
-        color: var(--color-primary);
-        border-bottom: 2px solid var(--color-primary);
-        padding-bottom: 10px;
-        margin-top: 0;
-        margin-bottom: 15px;
-        font-weight: 700;
-        font-size: 1.2em;
-        display: flex; 
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .chatitem {
-        padding: 12px 10px;
-        cursor: pointer;
-        transition: background-color 0.2s, border-left 0.2s;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-radius: 6px;
-        margin-bottom: 5px;
-        border-left: 3px solid transparent;
-    }
-
-    .chatitem:hover {
-        background-color: #2b2b2b;
-    }
-
-    .chatitem.active {
-        background-color: #2b2b2b;
-        border-left: 3px solid var(--color-primary);
-        font-weight: 600;
-    }
-
-    /* --- ESTADOS --- */
-    .chat-status {
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        margin-left: 10px;
-    }
-
-    .status-online {
-        background-color: var(--color-status-online);
-    }
-
-    .status-offline {
-        background-color: var(--color-status-offline);
-    }
-
-    /* --- 2. PANEL DE CHAT PRINCIPAL (ARREGLO DE ESPACIO MUERTO) --- */
-    #chatpane {
-        display: flex;
-        flex-direction: column;
-        flex: 1;
-        padding: 0; 
-    }
-    
-    /* El contenedor #chatContent es crucial para la distribución interna */
-    #chatContent {
-        display: flex; 
-        flex-direction: column; 
-        flex: 1; /* Esto asegura que el #chatContent estire el #chatpane a 100% de la altura disponible */
-    }
-
-    /* Encabezado del chat (Chat Global) */
-    .chatbar {
-        display: flex;
-        justify-content: flex-start;
-        align-items: center;
-        width: 100%;
-        background: linear-gradient(to right, var(--chat-me-bg) 50%, #FF9800 100%);
-        padding: 15px 20px; 
-        border-radius: 12px 12px 0 0;
-        box-sizing: border-box; 
-        margin-bottom: 0; 
-        flex-shrink: 0; /* No permite que se encoja */
-    }
-
-    #chatTitle {
-        font-size: 1.5em;
-        font-weight: 700;
-        color: var(--color-text-main); 
-    }
-
-    #messages {
-        flex: 1; /* CRUCIAL: Esto hace que #messages ocupe todo el espacio sobrante */
-        overflow-y: auto; /* Y solo esta área tiene scroll, no todo el panel */
-        display: flex;
-        flex-direction: column;
-        gap: 8px; 
-        padding: 15px; 
-        padding-right: 25px; 
-    }
-
-    /* --- MENSAJES Y BURBUJAS --- */
-    .message-wrapper {
-        display: flex;
-        flex-direction: column;
-        max-width: 70%;
-        margin-bottom: 8px;
-    }
-
-    .message-wrapper.me {
-        align-self: flex-end;
-        align-items: flex-end;
-    }
-
-    .message-wrapper.other {
-        align-self: flex-start;
-        align-items: flex-start;
-    }
-
-    .message-username {
-        font-size: 10px;
-        color: var(--color-text-secondary);
-        margin-bottom: 2px;
-    }
-
-    .message-bubble {
-        padding: 10px 14px;
-        border-radius: 20px; 
-        color: var(--color-text-main);
-        word-wrap: break-word;
-        font-size: 14px;
-        line-height: 1.4;
-    }
-
-    .message-wrapper.me .message-bubble {
-        background: var(--chat-me-bg);
-    }
-
-    .message-wrapper.other .message-bubble {
-        background: var(--chat-other-bg);
-    }
-
-    .message-bubble a {
-        color: var(--color-text-main);
-        font-weight: bold;
-        text-decoration: underline;
-    }
-
-    /* --- INPUT Y FORMULARIO --- */
-    #chatForm {
-        display: flex;
-        gap: 10px;
-        padding: 15px; 
-        padding-top: 10px; 
-        align-items: center; 
-        flex-shrink: 0; /* No permite que se encoja */
-        
-        /* Aseguramos que la foto y el input estén alineados con el fondo negro del chatpane */
-        background: var(--color-tertiary); 
-        border-radius: 0 0 12px 12px; /* Redondear solo la parte inferior */
-    }
-    
-    /* Nota: Revisa si la foto del avatar (imagen del gato) está dentro del #messages 
-       o si es un elemento estático. Si es estático y quieres que esté arriba de los mensajes,
-       debe ir ANTES del div #messages en el HTML. */
-
-    #chatInput {
-        flex: 1;
-        padding: 12px 16px;
-        border-radius: 24px;
-        border: 1px solid #444; 
-        background: #2b2b2b; 
-        color: var(--color-text-main);
-        font-size: 16px;
-    }
-
-    #chatForm button[type="submit"] {
-        padding: 12px 20px;
-        border-radius: 24px;
-        background: var(--color-primary); 
-        color: #fff;
-        font-weight: bold;
-        flex-shrink: 0; 
-        height: 48px; 
-        box-sizing: border-box;
-        transition: background-color 0.2s;
-        cursor: pointer;
-    }
-
-    #chatForm button[type="submit"]:hover {
-        background: #B71C1C; 
-    }
-
-    /* --- BOTONES DE ACCIÓN (CLIP/UBICACIÓN) --- */
-    #filePickerButton,
-    #locationButton {
-        width: 40px;
-        height: 40px;
-        padding: 0; 
-        border-radius: 50%;
-        background: #444; 
-        color: var(--color-primary); 
-        border: none; 
-        font-size: 18px;
-        flex-shrink: 0; 
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: background-color 0.2s, color 0.2s;
-        cursor: pointer;
-    }
-
-    #filePickerButton:hover,
-    #locationButton:hover {
-        background: var(--color-primary); 
-        color: var(--color-text-main); 
-    }
-
-    /* --- SWITCHES DE CONTROL --- */
-    .controls-container {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin-right: 10px;
-    }
-
-    .controls-container label {
-        color: var(--color-text-secondary) !important;
-        white-space: nowrap;
-        font-size: 14px !important; 
-    }
-    
-    .switch {
-        position: relative;
-        display: inline-block;
-        width: 38px;
-        height: 22px;
-        flex-shrink: 0;
-    }
-
-    .switch input {
-        opacity: 0;
-        width: 0;
-        height: 0;
-    }
-
-    .slider {
-        position: absolute;
-        cursor: pointer;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: var(--color-status-offline);
-        transition: .4s;
-        border-radius: 22px;
-    }
-
-    .slider:before {
-        position: absolute;
-        content: "";
-        height: 18px;
-        width: 18px;
-        left: 2px;
-        bottom: 2px;
-        background-color: white;
-        transition: .4s;
-        border-radius: 50%;
-    }
-
-    input:checked+.slider {
-        background-color: var(--color-primary);
-    }
-
-    input:checked+.slider:before {
-        transform: translateX(16px);
-    }
-</style>
 </head>
 
 <body>
@@ -362,16 +40,20 @@
                     </div>
                 </h3>
                 <div id="chatListContainer">
-                    </div>
+                </div>
             </div>
 
             <div class="card" id="chatpane">
-                <div class="chatbar"><span id="chatTitle">Chat Global</span></div>
-                
+                <div class="chatbar">
+                    <span id="chatTitle">Chat Global</span>
+                    <button id="callButton" style="display:none; margin-left: 10px;">📞 Llamar</button>
+                </div>
+
+
                 <div id="chatContent" style="display: flex; flex-direction: column; flex: 1;">
                     <div id="messages">
-                        </div>
-                    
+                    </div>
+
                     <form id="chatForm">
                         <div class="controls-container">
                             <label for="encryption-toggle">Encriptar</label>
@@ -626,6 +308,16 @@
             }
 
             chatTitle.textContent = currentChatName;
+
+            // Mostrar botón solo en chat privado
+            const callButton = document.getElementById('callButton');
+            if (recipientId) {
+                callButton.style.display = 'inline-block';
+                callButton.setAttribute('data-user-id', recipientId);
+            } else {
+                callButton.style.display = 'none';
+            }
+
             cargarUsuarios();
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
         };
@@ -792,6 +484,52 @@
             }
         });
 
+        // --- Iniciar llamada ---
+        callButton.addEventListener('click', () => {
+            const targetUserId = callButton.getAttribute('data-user-id');
+            if (!targetUserId) return;
+            console.log("📞 Enviando llamada a:", targetUserId); // <-- prueba visible
+            socket.emit('call:user', {
+                from: myId,
+                fromName: myName,
+                to: targetUserId
+            });
+        });
+
+        // --- Cuando me llaman ---
+        socket.on('call:incoming', (data) => {
+            console.log("📞 Llamada entrante:", data);
+            const modal = document.getElementById('callModal');
+            const callText = document.getElementById('callText');
+
+            callText.textContent = `${data.fromName} te está llamando...`;
+            modal.style.display = 'flex';
+
+            document.getElementById('acceptCall').onclick = () => {
+                modal.style.display = 'none';
+                socket.emit('call:accepted', { ...data, acceptedBy: myId });
+                sessionStorage.setItem("remoteUserId", data.from);
+                window.location.href = "Videollamada.html";
+            };
+
+
+            document.getElementById('rejectCall').onclick = () => {
+                modal.style.display = 'none';
+                socket.emit('call:rejected', { ...data, rejectedBy: myId });
+            };
+        });
+
+        socket.on('call:accepted', (data) => {
+            alert(`El usuario aceptó la llamada.`);
+            // AÑADIR ESTA LÍNEA CRUCIAL:
+            sessionStorage.setItem("remoteUserId", data.from); // <--- AÑADIDO
+            window.location.href = "Videollamada.html";
+        });
+
+        socket.on('call:rejected', (data) => {
+            alert(`El usuario rechazó la llamada.`);
+        });
+
 
         // =========================================================
         //                 INICIALIZACIÓN (Sin cambios)
@@ -802,6 +540,15 @@
         });
 
     </script>
+
+    <div id="callModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <p id="callText"></p>
+            <button id="acceptCall">Aceptar</button>
+            <button id="rejectCall">Rechazar</button>
+        </div>
+    </div>
+
 
 </body>
 

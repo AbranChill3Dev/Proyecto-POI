@@ -36,11 +36,18 @@
         <div class="vcgrid mt">
             <div class="feed">
                 <span class="vc-name">Usuario A</span>
+                <video id="localVideo" autoplay playsinline muted></video>
             </div>
+
             <div class="feed">
                 <span class="vc-name">Usuario B</span>
+                <video id="remoteVideo" autoplay playsinline></video>
             </div>
         </div>
+
+
+
+
         <div class="vcctrl">
             <button class="kbtn dark" title="Micrófono">🎙️</button>
             <button class="kbtn dark" title="Cámara">📷</button>
@@ -59,6 +66,11 @@
             <p>&copy; 2026 QuinielaZo. Todos los derechos reservados.</p>
         </div>
     </footer>
+
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="../JS/videollamada.js"></script>
+
 
 </body>
 
