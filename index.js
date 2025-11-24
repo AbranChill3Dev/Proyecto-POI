@@ -23,7 +23,7 @@ const io = new Server(server, {
         origin: [
             "http://localhost:3000",
             "http://127.0.0.1:3000",
-            "http://192.168.0.5:3000"
+            "http://192.168.0.2:3000"
         ],
         methods: ["GET", "POST"]
     }
@@ -117,5 +117,5 @@ app.get('/profile/:id', (req, res) => {
 server.listen(port, "0.0.0.0", () => {
     console.log("🚀 Servidor corriendo en:");
     console.log(`👉 PC:      http://localhost:${port}`);
-    console.log(`👉 Celular: http://192.168.0.5:${port}`);
+    console.log(`👉 Celular: http://192.168.0.2:${port}`);
 });

@@ -185,7 +185,7 @@
             const password = document.getElementById('login-password').value;
 
             try {
-                const res = await fetch('http://192.168.0.5:3000/login', {
+                const res = await fetch('http://192.168.0.2:3000/login', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ correo, password })
@@ -196,7 +196,7 @@
                     // Guardamos ambos: id y nombre de usuario
                     localStorage.setItem('userId', data.id_usuario);
                     localStorage.setItem('usuario', data.usuario); // <--- esta línea faltaba
-                    window.location.href = `http://192.168.0.5:3000/HTML/perfil.html`;
+                    window.location.href = `http://192.168.0.2:3000/HTML/perfil.html`;
                 }
                 else {
                     const errorData = await res.json();
@@ -220,7 +220,7 @@
             const password = document.getElementById('reg-password').value;
 
             try {
-                const res = await fetch('http://192.168.0.5:3000/register', {
+                const res = await fetch('http://192.168.0.2:3000/register', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ nombre, apellido, fecha, email, usuario, password })

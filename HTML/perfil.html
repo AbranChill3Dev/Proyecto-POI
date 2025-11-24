@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     try {
-        const res = await fetch(`http://192.168.0.5:3000/profile/${userId}`);
+        const res = await fetch(`http://192.168.0.2:3000/profile/${userId}`);
         if (!res.ok) throw new Error('Error al cargar perfil');
 
         const data = await res.json();
@@ -103,7 +103,7 @@ document.getElementById('logout-button').addEventListener('click', async () => {
     if (!userId) return window.location.href = 'inicio.html';
 
     try {
-        const res = await fetch('http://192.168.0.5:3000/logout', {
+        const res = await fetch('http://192.168.0.2:3000/logout', {
             method: 'POST',
             headers: {'Content-Type':'application/json'},
             body: JSON.stringify({ id_usuario: userId })

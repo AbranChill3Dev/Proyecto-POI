@@ -9,74 +9,327 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../CSS/Styles.css">
     <style>
-        #chatpane {
-            display: flex;
-            flex-direction: column;
-            height: 600px;
-            max-height: 80vh;
-            background: rgba(0, 0, 0, 0.55);
-            border-radius: 16px;
-            box-shadow: 0 8px 32px rgba(130, 0, 0, 0.22);
-            padding: 16px;
-            color: #fff;
-            flex: 1;
-        }
+    /* VARIABLES DE COLOR PROFESIONAL ROJO/OSCURO */
+    :root {
+        --color-primary: #E53935;     /* Rojo Vibrante - Énfasis */
+        --color-tertiary: #1a1a1a;    /* Gris Oscuro - Para paneles */
+        --color-text-main: #FFFFFF;   
+        --color-text-secondary: #AAAAAA; 
+        --color-status-online: #43A047; 
+        --color-status-offline: #555555; 
+        --chat-me-bg: #820000;        /* Rojo base de tu gradiente */
+        --chat-other-bg: #333333;     /* Gris oscuro */
+    }
 
-        #chatContent {
-            display: flex;
-            flex-direction: column;
-            flex: 1;
-        }
+    /* Estilos Generales y Layout */
+    .chatwrap {
+        display: flex;
+        gap: 20px;
+        max-width: 1200px;
+        margin: 20px auto;
+        /* *************************************** */
+        /* CORRECCIÓN CLAVE 1: Usar min-height en lugar de height */
+        /* Esto permite que el contenedor se ajuste a la altura del contenido si es menor */
+        min-height: 80vh; 
+        max-height: 85vh; /* Opcional: mantener un límite máximo */
+        /* *************************************** */
+    }
 
-        #messages {
-            flex: 1;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            padding: 8px;
-        }
+    /* PANELES DE CHAT Y LISTA */
+    .card {
+        background: var(--color-tertiary);
+        border-radius: 12px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.6);
+        color: var(--color-text-main);
+        /* CORRECCIÓN CLAVE 2: Asegurar que los paneles crecen y se ajustan */
+        height: 100%; /* Permite que el chatlist y chatpane ocupen el 85vh del chatwrap */
+        display: flex;
+        flex-direction: column;
+    }
 
-        #chatForm {
-            display: flex;
-            gap: 10px;
-            padding-top: 10px;
-        }
+    /* --- LISTA DE CHATS Y USUARIOS --- */
+    .chatlist {
+        width: 300px;
+        min-width: 250px;
+        padding: 15px;
+        overflow-y: auto;
+    }
+    
+    /* El resto de estilos de .chatlist, h3, .chatitem, etc. (sin cambios) */
 
-        #chatInput {
-            flex: 1;
-            padding: 12px 16px;
-            border-radius: 20px;
-            border: none;
-            outline: none;
-            background: rgba(255, 255, 255, 0.1);
-            color: #fff;
-            font-size: 16px;
-        }
+    .chatlist h3 {
+        color: var(--color-primary);
+        border-bottom: 2px solid var(--color-primary);
+        padding-bottom: 10px;
+        margin-top: 0;
+        margin-bottom: 15px;
+        font-weight: 700;
+        font-size: 1.2em;
+        display: flex; 
+        justify-content: space-between;
+        align-items: center;
+    }
 
-        #chatInput::placeholder {
-            color: #ccc;
-        }
+    .chatitem {
+        padding: 12px 10px;
+        cursor: pointer;
+        transition: background-color 0.2s, border-left 0.2s;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-radius: 6px;
+        margin-bottom: 5px;
+        border-left: 3px solid transparent;
+    }
 
-        #chatForm button {
-            padding: 12px 20px;
-            border-radius: 20px;
-            border: none;
-            background: #a80000;
-            color: #fff;
-            font-weight: bold;
-            cursor: pointer;
-        }
+    .chatitem:hover {
+        background-color: #2b2b2b;
+    }
 
-        #messages::-webkit-scrollbar {
-            width: 6px;
-        }
+    .chatitem.active {
+        background-color: #2b2b2b;
+        border-left: 3px solid var(--color-primary);
+        font-weight: 600;
+    }
 
-        #messages::-webkit-scrollbar-thumb {
-            background: #820000;
-            border-radius: 3px;
-        }
-    </style>
+    /* --- ESTADOS --- */
+    .chat-status {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        margin-left: 10px;
+    }
+
+    .status-online {
+        background-color: var(--color-status-online);
+    }
+
+    .status-offline {
+        background-color: var(--color-status-offline);
+    }
+
+    /* --- 2. PANEL DE CHAT PRINCIPAL (ARREGLO DE ESPACIO MUERTO) --- */
+    #chatpane {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        padding: 0; 
+    }
+    
+    /* El contenedor #chatContent es crucial para la distribución interna */
+    #chatContent {
+        display: flex; 
+        flex-direction: column; 
+        flex: 1; /* Esto asegura que el #chatContent estire el #chatpane a 100% de la altura disponible */
+    }
+
+    /* Encabezado del chat (Chat Global) */
+    .chatbar {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        width: 100%;
+        background: linear-gradient(to right, var(--chat-me-bg) 50%, #FF9800 100%);
+        padding: 15px 20px; 
+        border-radius: 12px 12px 0 0;
+        box-sizing: border-box; 
+        margin-bottom: 0; 
+        flex-shrink: 0; /* No permite que se encoja */
+    }
+
+    #chatTitle {
+        font-size: 1.5em;
+        font-weight: 700;
+        color: var(--color-text-main); 
+    }
+
+    #messages {
+        flex: 1; /* CRUCIAL: Esto hace que #messages ocupe todo el espacio sobrante */
+        overflow-y: auto; /* Y solo esta área tiene scroll, no todo el panel */
+        display: flex;
+        flex-direction: column;
+        gap: 8px; 
+        padding: 15px; 
+        padding-right: 25px; 
+    }
+
+    /* --- MENSAJES Y BURBUJAS --- */
+    .message-wrapper {
+        display: flex;
+        flex-direction: column;
+        max-width: 70%;
+        margin-bottom: 8px;
+    }
+
+    .message-wrapper.me {
+        align-self: flex-end;
+        align-items: flex-end;
+    }
+
+    .message-wrapper.other {
+        align-self: flex-start;
+        align-items: flex-start;
+    }
+
+    .message-username {
+        font-size: 10px;
+        color: var(--color-text-secondary);
+        margin-bottom: 2px;
+    }
+
+    .message-bubble {
+        padding: 10px 14px;
+        border-radius: 20px; 
+        color: var(--color-text-main);
+        word-wrap: break-word;
+        font-size: 14px;
+        line-height: 1.4;
+    }
+
+    .message-wrapper.me .message-bubble {
+        background: var(--chat-me-bg);
+    }
+
+    .message-wrapper.other .message-bubble {
+        background: var(--chat-other-bg);
+    }
+
+    .message-bubble a {
+        color: var(--color-text-main);
+        font-weight: bold;
+        text-decoration: underline;
+    }
+
+    /* --- INPUT Y FORMULARIO --- */
+    #chatForm {
+        display: flex;
+        gap: 10px;
+        padding: 15px; 
+        padding-top: 10px; 
+        align-items: center; 
+        flex-shrink: 0; /* No permite que se encoja */
+        
+        /* Aseguramos que la foto y el input estén alineados con el fondo negro del chatpane */
+        background: var(--color-tertiary); 
+        border-radius: 0 0 12px 12px; /* Redondear solo la parte inferior */
+    }
+    
+    /* Nota: Revisa si la foto del avatar (imagen del gato) está dentro del #messages 
+       o si es un elemento estático. Si es estático y quieres que esté arriba de los mensajes,
+       debe ir ANTES del div #messages en el HTML. */
+
+    #chatInput {
+        flex: 1;
+        padding: 12px 16px;
+        border-radius: 24px;
+        border: 1px solid #444; 
+        background: #2b2b2b; 
+        color: var(--color-text-main);
+        font-size: 16px;
+    }
+
+    #chatForm button[type="submit"] {
+        padding: 12px 20px;
+        border-radius: 24px;
+        background: var(--color-primary); 
+        color: #fff;
+        font-weight: bold;
+        flex-shrink: 0; 
+        height: 48px; 
+        box-sizing: border-box;
+        transition: background-color 0.2s;
+        cursor: pointer;
+    }
+
+    #chatForm button[type="submit"]:hover {
+        background: #B71C1C; 
+    }
+
+    /* --- BOTONES DE ACCIÓN (CLIP/UBICACIÓN) --- */
+    #filePickerButton,
+    #locationButton {
+        width: 40px;
+        height: 40px;
+        padding: 0; 
+        border-radius: 50%;
+        background: #444; 
+        color: var(--color-primary); 
+        border: none; 
+        font-size: 18px;
+        flex-shrink: 0; 
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.2s, color 0.2s;
+        cursor: pointer;
+    }
+
+    #filePickerButton:hover,
+    #locationButton:hover {
+        background: var(--color-primary); 
+        color: var(--color-text-main); 
+    }
+
+    /* --- SWITCHES DE CONTROL --- */
+    .controls-container {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-right: 10px;
+    }
+
+    .controls-container label {
+        color: var(--color-text-secondary) !important;
+        white-space: nowrap;
+        font-size: 14px !important; 
+    }
+    
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 38px;
+        height: 22px;
+        flex-shrink: 0;
+    }
+
+    .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: var(--color-status-offline);
+        transition: .4s;
+        border-radius: 22px;
+    }
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 18px;
+        width: 18px;
+        left: 2px;
+        bottom: 2px;
+        background-color: white;
+        transition: .4s;
+        border-radius: 50%;
+    }
+
+    input:checked+.slider {
+        background-color: var(--color-primary);
+    }
+
+    input:checked+.slider:before {
+        transform: translateX(16px);
+    }
+</style>
 </head>
 
 <body>
@@ -96,23 +349,47 @@
 
     <section class="screen" id="chats">
         <div class="chatwrap">
+
             <div class="card chatlist">
-                <h3>Chats</h3>
-                <button class="crear-grupo-btn" onclick="mostrarFormGrupo()">+ Crear grupo</button>
-                <form class="crear-grupo-form" id="crearGrupoForm" onsubmit="return agregarGrupo(event)">
-                    <input type="text" id="nuevoGrupoNombre" placeholder="Nombre del grupo" required maxlength="30">
-                    <input type="text" id="nuevoGrupoUsuarios" placeholder="Usuarios (separados por coma)" required>
-                    <div class="form-actions">
-                        <button type="submit">Agregar</button>
-                        <button type="button" class="cancelar" onclick="ocultarFormGrupo()">Cancelar</button>
+                <h3>
+                    Chats y Usuarios
+                    <div class="controls-container">
+                        <label for="status-toggle">Activo</label>
+                        <label class="switch">
+                            <input type="checkbox" id="status-toggle" checked>
+                            <span class="slider"></span>
+                        </label>
                     </div>
-                </form>
-                <div id="chatListContainer"></div>
+                </h3>
+                <div id="chatListContainer">
+                    </div>
             </div>
 
             <div class="card" id="chatpane">
-                <div class="chatbar"><span id="chatTitle">Grupo A</span></div>
-                <div id="chatContent"></div>
+                <div class="chatbar"><span id="chatTitle">Chat Global</span></div>
+                
+                <div id="chatContent" style="display: flex; flex-direction: column; flex: 1;">
+                    <div id="messages">
+                        </div>
+                    
+                    <form id="chatForm">
+                        <div class="controls-container">
+                            <label for="encryption-toggle">Encriptar</label>
+                            <label class="switch" style="width: 38px; height: 22px;">
+                                <input type="checkbox" id="encryption-toggle">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <button type="button" id="filePickerButton">📎</button>
+                        <input type="file" id="fileInput" style="display: none;" />
+
+                        <button type="button" id="locationButton">📍</button>
+
+                        <input id="chatInput" placeholder="Escribe un mensaje…" autocomplete="off" />
+                        <button type="submit">Enviar</button>
+                    </form>
+                </div>
             </div>
         </div>
     </section>
@@ -124,159 +401,407 @@
             <a href="#">Términos y Condiciones</a>
         </div>
         <div class="copyright">
-            <p>&copy; 2026 QuinielaZo. Todos los derechos reservados.</p>
+            <p>© 2026 QuinielaZo. Todos los derechos reservados.</p>
         </div>
     </footer>
 
     <script type="module">
         import { io } from 'https://cdn.socket.io/4.3.2/socket.io.esm.min.js';
 
-        const ipLocal = "192.168.0.5";
-        const socket = io(window.location.hostname === "localhost"
+        const IP_LOCAL = "192.168.0.2";
+        const SERVER_URL = window.location.hostname === "localhost"
             ? "http://localhost:3000"
-            : `http://${ipLocal}:3000`
-        );
+            : `http://${IP_LOCAL}:3000`;
+
+        const socket = io(SERVER_URL);
+        const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
         const myName = localStorage.getItem('usuario');
         const myId = localStorage.getItem('userId');
 
+        // Estado del chat
+        let currentChatId = 1;
+        let currentChatName = 'Chat Global';
+        let currentRecipientId = null;
+        let onlineUsers = [];
+
+        const chatListContainer = document.getElementById('chatListContainer');
+        const messagesDiv = document.getElementById('messages');
+        const chatTitle = document.getElementById('chatTitle');
+        const encryptionToggle = document.getElementById('encryption-toggle');
+        const fileInput = document.getElementById('fileInput');
+        const filePickerButton = document.getElementById('filePickerButton');
+
+        const chatForm = document.getElementById('chatForm');
+        const chatInput = document.getElementById('chatInput');
+
+        // ELEMENTOS DE CONTROL
+        const statusToggle = document.getElementById('status-toggle');
+        const locationButton = document.getElementById('locationButton');
+
+
         if (!myName || !myId) {
             alert("Inicia sesión primero.");
             window.location.href = "../HTML/inicio.html";
+            throw new Error("Usuario no autenticado.");
         }
 
-        let currentChat = "global"; // modo chat global o individual
-        const chatListContainer = document.getElementById('chatListContainer');
-        const chatContent = document.getElementById('chatContent');
+        // =========================================================
+        // 1. CONEXIÓN Y ESTADO (ACTIVO/INACTIVO)
+        // =========================================================
 
-        // =======================
-        //   CARGAR USUARIOS
-        // =======================
+        socket.on('connect', () => {
+            console.log('Conectado a Socket.IO');
+            if (statusToggle.checked) {
+                socket.emit('user connected', myId);
+            }
+        });
+
+        socket.on('online users', (userIds) => {
+            onlineUsers = userIds.map(id => parseInt(id));
+            cargarUsuarios();
+        });
+
+        // --- MANEJO DEL SWITCH DE ESTADO ---
+        statusToggle.addEventListener('change', () => {
+            const isActive = statusToggle.checked;
+            if (isActive) {
+                socket.emit('user connected', myId);
+            } else {
+                socket.emit('manual disconnect', myId);
+            }
+        });
+
+
+        // =========================================================
+        // 2. LÓGICA DE COMPARTIR UBICACIÓN (CORREGIDO)
+        // =========================================================
+
+        locationButton.addEventListener('click', () => {
+            if (!navigator.geolocation) {
+                alert('Tu navegador no soporta la geolocalización.');
+                return;
+            }
+
+            // Deshabilitar botón para feedback visual
+            locationButton.disabled = true;
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+
+                    // 1. Generar la URL de Google Maps para compartir (q=<lat>,<lon>)
+                    // NOTA: Usar el formato de coordenadas que Google Maps entiende
+                    const googleMapsUrl = `https://maps.google.com/?q=${lat},${lon}`;
+
+                    // 2. Crear el mensaje especial reconocido por el backend: [UBICACIÓN:URL]
+                    const mapMessage = `[UBICACIÓN:${googleMapsUrl}]`;
+
+                    // 3. Enviar el mensaje. NOTA: La ubicación NUNCA debe ir encriptada.
+                    sendChatMessage(mapMessage, false);
+
+                    locationButton.disabled = false;
+                },
+                (error) => {
+                    console.error('Error al obtener la ubicación:', error.message);
+                    alert('Error al obtener la ubicación. Por favor, revisa que los permisos de ubicación estén activos.');
+                    locationButton.disabled = false;
+                },
+                { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+            );
+        });
+
+        function sendChatMessage(msg, isEncrypted) {
+            if (!msg.trim()) return;
+
+            const data = {
+                mensaje: msg,
+                isEncrypted: isEncrypted
+            };
+
+            if (currentChatId === 1) {
+                // Chat General
+                data.id_usuario = myId;
+                data.usuario = myName;
+                socket.emit('general message', data);
+            } else {
+                // Chat Privado
+                data.id_chat = currentChatId;
+                data.id_remitente = myId;
+                data.usuario_remitente = myName;
+                data.id_destinatario = currentRecipientId;
+                socket.emit('private message', data);
+            }
+        }
+
+
+        // =========================================================
+        // 3. MANEJO DE CHAT Y UI
+        // =========================================================
+
+        socket.on('general message', (data) => {
+            if (currentChatId === 1) {
+                const tipo = parseInt(data.id_usuario) === parseInt(myId) ? 'me' : 'other';
+                addMessage(data.mensaje, tipo, data.usuario, data.id_mensaje);
+            }
+        });
+
+        socket.on('private message', (data) => {
+            if (data.id_chat === currentChatId) {
+                const tipo = parseInt(data.id_usuario) === parseInt(myId) ? 'me' : 'other';
+                addMessage(data.mensaje, tipo, data.usuario, data.id_mensaje);
+            }
+        });
+
+
+        // --- 1. CARGA LA LISTA DE USUARIOS (Sin cambios) ---
         async function cargarUsuarios() {
             try {
-                const res = await fetch(`http://192.168.0.5:3000/usuarios/${myId}`);
+                const res = await fetch(`${SERVER_URL}/usuarios/${myId}`);
                 const usuarios = await res.json();
 
-                chatListContainer.innerHTML = `<div class="chatitem" onclick="selectChat('global', 0)">
-            💬 <strong>Chat Global</strong></div>`;
+                const activeId = currentRecipientId || (currentChatId === 1 ? 'global' : null);
+
+                let listHTML = `<div class="chatitem ${activeId === 'global' ? 'active' : ''}"
+                                onclick="selectChat('global', 1, 'Chat Global', null)">
+                                <div class="chat-info">💬 <strong>Chat Global</strong></div>
+                                </div>`;
 
                 usuarios.forEach(u => {
-                    const div = document.createElement('div');
-                    div.classList.add('chatitem');
-                    div.textContent = u.usuario;
-                    div.onclick = () => selectChat(u.id_usuario, u.usuario);
-                    chatListContainer.appendChild(div);
+                    const isOnline = onlineUsers.includes(u.id_usuario);
+                    const isActive = activeId === u.id_usuario;
+                    const statusClass = isOnline ? 'status-online' : 'status-offline';
+
+                    listHTML += `<div class="chatitem ${isActive ? 'active' : ''}"
+                                onclick="selectChat('private', null, '${u.usuario}', ${u.id_usuario})">
+                                <div class="chat-info">
+                                    ${u.usuario}
+                                </div>
+                                <span class="chat-status ${statusClass}" title="${isOnline ? 'Activo' : 'Inactivo'}"></span>
+                                </div>`;
                 });
+
+                chatListContainer.innerHTML = listHTML;
             } catch (err) {
                 console.error('Error al cargar usuarios:', err);
             }
         }
 
-        // =======================
-        //   CARGAR MENSAJES
-        // =======================
-        async function cargarMensajes() {
+        // --- 2. CAMBIA DE CHAT (Sin cambios) ---
+        window.selectChat = async function (type, chatId, name, recipientId) {
+
+            if (type === 'global') {
+                currentChatId = 1;
+                currentChatName = name;
+                currentRecipientId = null;
+                await cargarMensajes(currentChatId);
+            }
+            else if (type === 'private') {
+                currentRecipientId = recipientId;
+                currentChatName = name;
+
+                try {
+                    const res = await fetch(`${SERVER_URL}/chat/private`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            id_usuario_1: myId,
+                            id_usuario_2: recipientId
+                        })
+                    });
+                    const data = await res.json();
+
+                    if (data.id_chat) {
+                        currentChatId = data.id_chat;
+                        await cargarMensajes(currentChatId);
+                    } else {
+                        throw new Error('No se pudo obtener el ID de chat privado.');
+                    }
+                } catch (error) {
+                    console.error('Error al iniciar chat privado:', error);
+                    alert('No se pudo iniciar el chat privado.');
+                    return;
+                }
+            }
+
+            chatTitle.textContent = currentChatName;
+            cargarUsuarios();
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        };
+
+        // --- 3. CARGA LOS MENSAJES ANTERIORES DEL CHAT ACTUAL (Sin cambios) ---
+        async function cargarMensajes(chatId) {
             try {
-                const res = await fetch(`http://192.168.0.5:3000/mensajes/${myId}`);
+                let endpoint = (chatId === 1) ? '/mensajes/general' : `/mensajes/chat/${chatId}`;
+                const res = await fetch(`${SERVER_URL}${endpoint}`);
                 const mensajes = await res.json();
-                const messagesDiv = document.getElementById('messages');
+
                 messagesDiv.innerHTML = '';
 
                 mensajes.forEach(m => {
-                    addMessage(m.mensaje, m.usuario === myName ? 'me' : 'other', m.usuario);
+                    const tipo = parseInt(m.id_usuario) === parseInt(myId) ? 'me' : 'other';
+                    addMessage(m.mensaje, tipo, m.usuario, m.id_mensaje);
                 });
+
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
             } catch (err) {
-                console.error('Error al cargar mensajes:', err);
+                console.error(`Error al cargar mensajes del chat ${chatId}:`, err);
             }
         }
 
-        // =======================
-        //   RENDER CHAT
-        // =======================
-        function renderMensajes() {
-            chatContent.innerHTML = `
-        <div id="messages"></div>
-        <form id="chatForm">
-            <input id="chatInput" placeholder="Escribe un mensaje…" autocomplete="off" />
-            <button type="submit">Enviar</button>
-        </form>
-    `;
+        // --- loadFileContent (Sin cambios) ---
+        async function loadFileContent(bubble, id_mensaje) {
+            try {
+                const res = await fetch(`${SERVER_URL}/archivo/${id_mensaje}`);
+                if (!res.ok) throw new Error('Metadata no encontrada');
 
-            const form = document.getElementById('chatForm');
-            const input = document.getElementById('chatInput');
+                const fileData = await res.json();
+                const tipoArchivo = fileData.tipo;
 
-            form.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const msg = input.value.trim();
-                if (!msg) return;
+                bubble.innerHTML = '';
 
-                addMessage(msg, 'me', myName);
-                socket.emit('chat message', { id_usuario: myId, usuario: myName, mensaje: msg });
-                input.value = '';
-            });
+                if (tipoArchivo === 'imagen') {
+                    const img = document.createElement('img');
+                    img.src = `${SERVER_URL}${fileData.ruta_archivo}`;
+                    img.style.maxWidth = '250px';
+                    img.style.maxHeight = '250px';
+                    img.style.display = 'block';
+                    img.style.borderRadius = '8px';
+                    bubble.appendChild(img);
+                } else {
+                    const link = document.createElement('a');
+                    link.href = `${SERVER_URL}${fileData.ruta_archivo}`;
+                    link.textContent = `Descargar: ${fileData.nombre_original}`;
+                    link.download = fileData.nombre_original;
+                    link.target = '_blank';
+                    link.style.color = 'white';
+                    link.style.textDecoration = 'underline';
 
-            // Escuchar mensajes nuevos
-            socket.off('chat message');
-            socket.on('chat message', (data) => {
-                if (data.usuario === myName) return; // evita duplicados
-                addMessage(data.mensaje, 'other', data.usuario);
-            });
-
-            // Cargar mensajes anteriores
-            cargarMensajes();
+                    bubble.innerHTML = '📎 Archivo: ';
+                    bubble.appendChild(link);
+                }
+            } catch (e) {
+                console.error('Error al cargar archivo:', e);
+                bubble.innerHTML = '❌ [Error al cargar archivo]';
+            }
         }
 
-        // =======================
-        //   AGREGAR MENSAJE
-        // =======================
-        function addMessage(msg, tipo, usuario) {
-            const messagesDiv = document.getElementById('messages');
+        // --- addMessage (Manejo de UBICACIÓN CORREGIDO) ---
+        function addMessage(msg, tipo, usuario, id_mensaje) {
             const wrapper = document.createElement('div');
-            wrapper.style.display = 'flex';
-            wrapper.style.flexDirection = 'column';
-            wrapper.style.maxWidth = '70%';
-            wrapper.style.marginBottom = '8px';
-            wrapper.style.alignSelf = tipo === 'me' ? 'flex-end' : 'flex-start';
+            wrapper.classList.add('message-wrapper', tipo);
 
-            const userTag = document.createElement('span');
-            userTag.textContent = usuario;
-            userTag.style.fontSize = '12px';
-            userTag.style.color = '#ccc';
-            userTag.style.marginBottom = '4px';
-            wrapper.appendChild(userTag);
+            if (tipo === 'other' || currentChatId !== 1) {
+                const userTag = document.createElement('span');
+                userTag.classList.add('message-username');
+                userTag.textContent = usuario;
+                wrapper.appendChild(userTag);
+            }
 
             const bubble = document.createElement('div');
-            bubble.textContent = msg;
-            bubble.style.padding = '10px 14px';
-            bubble.style.borderRadius = '16px';
-            bubble.style.color = '#fff';
-            bubble.style.wordWrap = 'break-word';
-            bubble.style.background = tipo === 'me' ? '#820000' : '#333';
-            wrapper.appendChild(bubble);
+            bubble.classList.add('message-bubble');
 
+            const isFilePlaceholder = msg && msg.startsWith('[ARCHIVO:') && id_mensaje;
+            const isLocationPlaceholder = msg && msg.startsWith('[UBICACIÓN:');
+
+            if (isFilePlaceholder) {
+                bubble.textContent = 'Cargando archivo...';
+                loadFileContent(bubble, id_mensaje);
+            } else if (isLocationPlaceholder) {
+                // 1. Obtener la URL directamente del placeholder: [UBICACIÓN:URL_DE_MAPS]
+                const urlMatch = msg.match(/^\[UBICACIÓN:(.*)\]$/);
+
+                if (urlMatch && urlMatch[1]) {
+                    const mapLink = urlMatch[1];
+
+                    // 2. Insertar el contenido HTML para mostrar el enlace
+                    bubble.innerHTML = `
+                        📍 <strong>Ubicación Compartida</strong>
+                        <br>
+                        <a href="${mapLink}" target="_blank" style="color: var(--color-text-main); text-decoration: underline;">Ver en Google Maps</a>
+                    `;
+                } else {
+                    bubble.textContent = '📍 [Ubicación inválida]';
+                }
+            } else {
+                bubble.textContent = msg;
+            }
+
+            wrapper.appendChild(bubble);
             messagesDiv.appendChild(wrapper);
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
         }
 
-        // =======================
-        //   SELECCIONAR CHAT
-        // =======================
-        window.selectChat = function (id, nombre) {
-            currentChat = id;
-            document.getElementById('chatTitle').textContent = nombre === 0 ? 'Chat Global' : nombre;
-            renderMensajes();
-        };
+        // =========================================================
+        //                 MANEJO DE ENVIOS (Texto y Archivo)
+        // =========================================================
 
-        // =======================
-        //   INICIALIZAR
-        // =======================
+        // --- ENVÍO DE TEXTO (Sin cambios) ---
+        chatForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const msg = chatInput.value.trim();
+            if (!msg) return;
+
+            sendChatMessage(msg, encryptionToggle.checked);
+            chatInput.value = '';
+        });
+
+        // --- ENVÍO DE ARCHIVO (Sin cambios) ---
+        filePickerButton.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        fileInput.addEventListener('change', async (e) => {
+            const archivo = e.target.files[0];
+            if (!archivo) return;
+
+            if (currentChatId === null) {
+                alert("Selecciona un chat primero.");
+                return;
+            }
+
+            if (archivo.size > MAX_FILE_SIZE) {
+                alert(`El archivo es demasiado grande (máximo ${MAX_FILE_SIZE / 1024 / 1024}MB).`);
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('archivo', archivo);
+            formData.append('id_chat', currentChatId);
+            formData.append('id_usuario', myId);
+            formData.append('usuario', myName);
+            formData.append('tipo_chat', currentRecipientId === null ? 'general' : 'private');
+            formData.append('id_destinatario', currentRecipientId || '');
+            formData.append('isEncrypted', encryptionToggle.checked);
+
+            try {
+                const res = await fetch(`${SERVER_URL}/upload`, {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                if (!res.ok) throw new Error(`Error ${res.status} al subir archivo`);
+
+                console.log('Archivo subido, esperando notificación de Socket.IO...');
+                fileInput.value = '';
+
+            } catch (error) {
+                console.error('Error de subida:', error);
+                alert('Fallo al subir el archivo. Revisa la consola del servidor.');
+            }
+        });
+
+
+        // =========================================================
+        //                 INICIALIZACIÓN (Sin cambios)
+        // =========================================================
         document.addEventListener('DOMContentLoaded', () => {
             cargarUsuarios();
-            renderMensajes();
+            cargarMensajes(currentChatId);
         });
+
     </script>
-
-
 
 </body>
 
